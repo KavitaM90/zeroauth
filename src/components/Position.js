@@ -60,37 +60,37 @@ const Position = () => {
   }, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-
-  // Handle row click to open the modal and select the row for deletion
-  const handleRowClick = (index) => {
-    setSelectedRowIndex(index); // Store the selected row index
+  const [selectedRowId, setSelectedRowId] = useState(null); // Define selectedRowId
+  // Handle row click (opens modal)
+  const handleRowClick = (id) => {
+    setSelectedRowId(id); // Store the selected row ID
     setIsModalOpen(true); // Open the modal
   };
 
   // Close the modal
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
-    setSelectedRowIndex(null); // Reset the selected row index
+    setIsModalOpen(false);
+    setSelectedRowId(null); // Reset selectedRowId when closing modal
   };
 
-  // Confirm deletion of the row
+  // Confirm deletion of a row
   const confirmDeleteRow = () => {
-    if (selectedRowIndex !== null) {
-      // Remove the selected row from submittedData
-      const updatedData = submittedData.filter(
-        (_, index) => index !== selectedRowIndex
-      );
-      setSubmittedData(updatedData); // Update the state to reflect the deleted row
+    if (selectedRowId !== null) {
+      const updatedData = submittedData.filter((row) => row.id !== selectedRowId);
+      setSubmittedData(updatedData);
     }
-    closeModal(); // Close the modal after deletion
+    closeModal(); // Close modal after deletion
   };
+
+  // Handle Select All functionality
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedRows(data.map((_, index) => index));
+      setSelectedRows(submittedData.map((row) => row.id));
     } else {
       setSelectedRows([]);
     }
   };
+
 
   const onToggle = () => {
     setShowFormm((prevState) => !prevState);
@@ -512,6 +512,7 @@ const Position = () => {
                             </label>
                             <input
                               type="number"
+                              step="any" 
                               id="nifty-prev-close"
                               name="nifty-prev-close"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -531,6 +532,7 @@ const Position = () => {
                             </label>
                             <input
                               type="text"
+                              step="any" 
                               id="nifty-min-ltp"
                               name="nifty-min-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -546,6 +548,7 @@ const Position = () => {
                             </label>
                             <input
                               type="number"
+                              step="any" 
                               id="nifty-max-ltp"
                               name="nifty-max-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -580,6 +583,7 @@ const Position = () => {
                             </label>
                             <input
                               type="number"
+                              step="any" 
                               id="sensex-prev-close"
                               name="sensex-prev-close"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -599,6 +603,7 @@ const Position = () => {
                             </label>
                             <input
                               type="number"
+                              step="any" 
                               id="sensex-min-ltp"
                               name="sensex-min-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -614,6 +619,7 @@ const Position = () => {
                             </label>
                             <input
                               type="number"
+                              step="any" 
                               id="sensex-max-ltp"
                               name="sensex-max-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -999,24 +1005,27 @@ const Position = () => {
   </tr>
 </thead>
 <tbody>
-  {submittedData.sort((a, b) => (a.position === "CLOSE" ? 1 : -1)) // Sort CLOSE rows to the bottom
-    .map((row, index) => (
+  {[...submittedData] // Create a new copy to prevent mutation
+  .sort((a, b) => {
+    if (a.position === "CLOSE" && b.position !== "CLOSE") return 1;
+    if (a.position !== "CLOSE" && b.position === "CLOSE") return -1;
+    return 0; // Keep original order for other cases
+  })
+  .map((row, index) => (
       <tr
-        key={index}
-        onClick={() => handleRowClick(index)}
-        className={`border-t shadow-sm shadow-gray-100 ${
-          row.position === "CLOSE"
-            ? "bg-rowDisable !text-disableText"
-            : ""
-        }`}
+      key={row.id} // Use unique id
+      onClick={() => handleRowClick(row.id)} // Pass id instead of index
+      className={`border-t shadow-sm shadow-gray-100 ${
+        row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
+      }`}
       >
         {/* Checkbox */}
         <td className="p-4 text-center">
-          <input
-type="checkbox"
-checked={isRowSelected(index)}
-onChange={() => handleRowSelect(index)}
-/>
+        <input
+            type="checkbox"
+            checked={selectedRows.includes(row.id)}
+            onChange={() => handleRowSelect(row.id)}
+          />
         </td>
 
         {/* Order Type */}
@@ -1695,13 +1704,11 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                       })
                     .map((row, index) => (
                       <tr
-                        key={index}
-                        onClick={() => handleRowClick(index)}
-                        className={`border-t shadow-sm shadow-gray-100 ${
-                          row.position === "CLOSE"
-                            ? "bg-rowDisable !text-disableText"
-                            : ""
-                        }`}
+                      key={row.id}
+                      onClick={() => handleRowClick(row.id)}
+                      className={`border-t shadow-sm shadow-gray-100 ${
+                        row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
+                      }`}
                       >
                         {/* Checkbox */}
                         {/* <td className="p-4 text-center">
@@ -2012,12 +2019,8 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                 <tfoot>
                   <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
                     <td colSpan="4" className="p-4"></td>
-
-                    <td className="p-4"></td>
-                    <td className="p-4 text-end">Total P&L</td>
-
-                    <td
-                      className={`p-4 text-sm font-normal text-end text-wrap truncate 
+                   <td className="p-4 text-end">Total P&L</td>
+ <td className={`p-4 text-sm font-normal text-end text-wrap truncate 
   ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     >
                       {parseFloat(totalProfit || 0) >= 0
@@ -2030,6 +2033,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             maximumFractionDigits: 2,
                           })}
                     </td>
+                    <td className="p-4"></td>
                   </tr>
                 </tfoot>
               </table>
@@ -2079,7 +2083,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
 
           {/* Labels for positive P&L */}
           {(item.action === "SELL" ? item.profitClose : item.profit) > 0 && (
-            <div className="absolute truncate w-20 top-1/2 transform -translate-y-1/2 left-[calc(50%-71px)] ">
+            <div className="absolute w-40 top-1/2 transform -translate-y-1/2 left-[calc(50%-167px)] ">
               {item.expiryType === "Weekly" &&
               (item.marketType === "MCX" ||
                 item.marketType === "BFO" ||
@@ -2132,7 +2136,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
 
           {/* Labels for negative P&L */}
           {(item.action === "SELL" ? item.profitClose : item.profit) < 0 && (
-            <div className="truncate w-20 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
+            <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
               {item.expiryType === "Weekly" &&
               (item.marketType === "MCX" ||
                 item.marketType === "BFO" ||
