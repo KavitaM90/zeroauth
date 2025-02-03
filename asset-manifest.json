@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/zeroauth/static/css/main.01cf9590.css",
-    "main.js": "/zeroauth/static/js/main.8a0154fd.js",
+    "main.js": "/zeroauth/static/js/main.86961507.js",
     "static/js/453.58b99018.chunk.js": "/zeroauth/static/js/453.58b99018.chunk.js",
     "index.html": "/zeroauth/index.html",
     "main.01cf9590.css.map": "/zeroauth/static/css/main.01cf9590.css.map",
-    "main.8a0154fd.js.map": "/zeroauth/static/js/main.8a0154fd.js.map",
+    "main.86961507.js.map": "/zeroauth/static/js/main.86961507.js.map",
     "453.58b99018.chunk.js.map": "/zeroauth/static/js/453.58b99018.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.01cf9590.css",
-    "static/js/main.8a0154fd.js"
+    "static/js/main.86961507.js"
   ]
 }
