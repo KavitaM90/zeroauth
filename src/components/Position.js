@@ -1013,7 +1013,7 @@ const Position = () => {
   })
   .map((row, index) => (
       <tr
-      key={row.id} // Use unique id
+      key={`${row.id}-${index}`} // Use unique id
       onClick={() => handleRowClick(row.id)} // Pass id instead of index
       className={`border-t shadow-sm shadow-gray-100 ${
         row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
@@ -1704,7 +1704,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                       })
                     .map((row, index) => (
                       <tr
-                      key={row.id}
+                      key={`${row.id}-${index}`}
                       onClick={() => handleRowClick(row.id)}
                       className={`border-t shadow-sm shadow-gray-100 ${
                         row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
