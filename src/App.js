@@ -1,8 +1,7 @@
-// src/App.js
 import React, { useEffect, useState } from "react";
-import { Routes, Route, BrowserRouter as Navigate, HashRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, Navigate, HashRouter } from "react-router-dom";
 import Login from "./Login";
-//import Home from "./Home"
+// import Home from "./Home";
 import Holding from "./components/Holding";
 import Position from "./components/Position";
 import "./App.css";
@@ -23,31 +22,22 @@ const App = () => {
 
   return (
     <MarketDataProvider>
-    <HashRouter>
-      <Routes>
-        {/* Independent Routes */}
-        <Route path="/" element={<Login />} />
-        
-        {/* Protected routes - only accessible if logged in */}
-        <Route 
-          path="/home" 
-          element={user ? <Nav /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/holdings" 
-          element={user ? <><Nav /><Holding /></> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/positions" 
-          element={user ? <><Nav /><Position  /></> : <Navigate to="/" />} 
-        />
-        {/* Other possible routes */}
-        {/* <Route path="/dashboard" element={user ? <><Nav /><Dashboard /></> : <Navigate to="/" />} /> */}
-        {/* <Route path="/orders" element={user ? <><Nav /><Orders /></> : <Navigate to="/" />} /> */}
-      </Routes>
-    </HashRouter>
+      <BrowserRouter>
+        <Routes>
+          {/* Independent Routes */}
+          <Route path="/" element={<Login />} />
+          
+          {/* Protected routes - only accessible if logged in */}
+          <Route path="/home" element={user ? <Nav /> : <Navigate to="/" />} />
+          <Route path="/holdings" element={user ? <><Nav /><Holding /></> : <Navigate to="/" />} />
+          <Route path="/positions" element={user ? <><Nav /><Position /></> : <Navigate to="/" />} />
+          
+          {/* Other possible routes */}
+          {/* <Route path="/dashboard" element={user ? <><Nav /><Dashboard /></> : <Navigate to="/" />} /> */}
+          {/* <Route path="/orders" element={user ? <><Nav /><Orders /></> : <Navigate to="/" />} /> */}
+        </Routes>
+      </BrowserRouter>
     </MarketDataProvider>
-   
   );
 };
 
