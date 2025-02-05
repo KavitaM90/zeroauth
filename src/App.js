@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, BrowserRouter as Navigate, HashRouter } from "react-router-dom";
 import Login from "./Login";
-import Home from "./Home"
+//import Home from "./Home"
 import Holding from "./components/Holding";
 import Position from "./components/Position";
 import "./App.css";

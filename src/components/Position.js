@@ -7,15 +7,13 @@ import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ConfirmationModal from "../modal/ConfirmationModal";
-import useTradeFormData from "../custom/useTradeFormData";
-import TradeForm from "./TradeForm";
-import { IoTelescopeOutline } from "react-icons/io5";
+// import useTradeFormData from "../custom/useTradeFormData";
+// import TradeForm from "./TradeForm";
 import tele1 from "../assets/tele1.jpg";
 import { useMarketData } from "../custom/useMarketData";
-import { RiDeleteBin6Line } from "react-icons/ri";
 
 const Position = () => {
-  const [isTradeFormVisible, setIsTradeFormVisible] = useState(false);
+ // const [isTradeFormVisible, setIsTradeFormVisible] = useState(false);
   const [data, setData] = useState([]); // Store submitted form data
   const [currentPage, setCurrentPage] = useState(1);
   const [submittedData, setSubmittedData] = useState([]);
@@ -59,7 +57,6 @@ const Position = () => {
     }
   }, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedRowIndex, setSelectedRowIndex] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null); // Define selectedRowId
   // Handle row click (opens modal)
   const handleRowClick = (id) => {
@@ -104,15 +101,15 @@ const Position = () => {
     );
   };
 
-  const isRowSelected = (index) => selectedRows.includes(index);
+  // const isRowSelected = (index) => selectedRows.includes(index);
 
-  const handleDownloadClick = () => {
-    setIsTradeFormVisible(true); // Show the TradeForm modal
-  };
+  // const handleDownloadClick = () => {
+  //   setIsTradeFormVisible(true); // Show the TradeForm modal
+  // };
 
-  const handleClose = () => {
-    setIsTradeFormVisible(false); // Close the TradeForm modal
-  };
+  // const handleClose = () => {
+  //   setIsTradeFormVisible(false); // Close the TradeForm modal
+  // };
   // useEffect to log whenever data changes
   useEffect(() => {
     console.log("Data state updated:", data);
