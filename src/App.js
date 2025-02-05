@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useEffect, useState } from "react";
-import { Routes, Route, BrowserRouter , Navigate } from "react-router-dom";
+import { Routes, Route, BrowserRouter as Navigate } from "react-router-dom";
 import Login from "./Login";
 import Home from "./Home"
 import Holding from "./components/Holding";
