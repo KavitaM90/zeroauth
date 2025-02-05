@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useEffect, useState } from "react";
-import { Routes, Route, BrowserRouter as Navigate, HashRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, HashRouter } from "react-router-dom";
 import Login from "./Login";
 import Home from "./Home"
 import Holding from "./components/Holding";
@@ -23,7 +23,7 @@ const App = () => {
 
   return (
     <MarketDataProvider>
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         {/* Independent Routes */}
         <Route path="/" element={<Login />} />
@@ -45,7 +45,7 @@ const App = () => {
         {/* <Route path="/dashboard" element={user ? <><Nav /><Dashboard /></> : <Navigate to="/" />} /> */}
         {/* <Route path="/orders" element={user ? <><Nav /><Orders /></> : <Navigate to="/" />} /> */}
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
     </MarketDataProvider>
    
   );
