@@ -39,23 +39,41 @@ const Position = () => {
     console.log("Data Retrieved from Local Storage:", storedData);
 
   // Append new data
-  const updatedData = [...storedData, data];
+  // const updatedData = [...storedData, data];
 
-  // Save updated data to localStorage
-  localStorage.setItem("marketData", JSON.stringify(updatedData));
-  console.log("Data Saved in Local Storage:", JSON.parse(localStorage.getItem("marketData")));
+  // // Save updated data to localStorage
+  // localStorage.setItem("marketData", JSON.stringify(updatedData));
+  // console.log("Data Saved in Local Storage:", JSON.parse(localStorage.getItem("marketData")));
+  // Append new data
+const updatedData = [...storedData, data];
+
+// Update state with new data
+setData(updatedData);  // Now, the 'data' state will hold the latest submitted data
+
+// Save updated data to localStorage
+console.log("Market Data:", marketData);
+localStorage.setItem("marketData", JSON.stringify(updatedData));
+console.log("Updated Data in State:", updatedData);
+
 
 
 
     setMarketData(data); // Update shared state
     setShowFormm(false); // Close the form modal
   };
+  // useEffect(() => {
+  //   const storedData = JSON.parse(localStorage.getItem("marketData")) || [];
+  //   if (storedData.length > 0) {
+  //     setMarketData(storedData);
+  //   }
+  // }, []);
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("marketData")) || [];
     if (storedData.length > 0) {
       setMarketData(storedData);
     }
-  }, []);
+  }, [setMarketData]);  // ✅ Added 'setMarketData' in dependencies
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null); // Define selectedRowId
   // Handle row click (opens modal)
@@ -176,10 +194,10 @@ const Position = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleDeleteRow = (index) => {
-    const updatedData = submittedData.filter((_, i) => i !== index);
-    setSubmittedData(updatedData);
-  };
+  // const handleDeleteRow = (index) => {
+  //   const updatedData = submittedData.filter((_, i) => i !== index);
+  //   setSubmittedData(updatedData);
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -229,7 +247,6 @@ const Position = () => {
             minLTP,
             maxLTP,
             quantity,
-            buyPrice,
             prevClose,
             averagePrice,
             action, // Ensure `action` is part of the data structure
