@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useTradeFormData from "../custom/useTradeFormData";
 
 const TradeForm = ({ onSubmit, editingData }) => {
