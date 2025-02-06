@@ -1025,9 +1025,9 @@ console.log("Updated Data in State:", updatedData);
     if (a.position !== "CLOSE" && b.position === "CLOSE") return -1;
     return 0; // Keep original order for other cases
   })
-  .map((row, index) => (
+  .map((row) => (
       <tr
-      key={`${row.id}-${index}`} // Use unique id
+      key={row.id} // Use unique id
       onClick={() => handleRowClick(row.id)} // Pass id instead of index
       className={`border-t shadow-sm shadow-gray-100 ${
         row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
