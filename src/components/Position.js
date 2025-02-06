@@ -136,17 +136,6 @@ console.log("Updated Data in State:", updatedData);
   // Sample data (you can replace this with actual data)
   const stockData = [
     // { stock: "RELIANCE", diff: "+10", percent: "+0.7%", value: "2,450.00" },
-    // { stock: "TCS", diff: "+35", percent: "+1.2%", value: "3,100.00" },
-    // { stock: "INFOSYS", diff: "+20", percent: "+0.6%", value: "1,750.00" },
-    // { stock: "HDFC BANK", diff: "-15", percent: "-0.4%", value: "1,640.00" },
-    // { stock: "ICICI BANK", diff: "+18", percent: "+1.0%", value: "870.00" },
-    // { stock: "HINDALCO", diff: "+8", percent: "+0.9%", value: "450.00" },
-    // {
-    //   stock: "BAJAJ FINANCE",
-    //   diff: "+100",
-    //   percent: "+2.5%",
-    //   value: "4,120.00",
-    // },
   ];
   // Pagination logic
   const totalPages = Math.ceil(stockData.length / rowsPerPage);
@@ -1029,9 +1018,13 @@ console.log("Updated Data in State:", updatedData);
       <tr
       key={row.id} // Use unique id
       onClick={() => handleRowClick(row.id)} // Pass id instead of index
+      // className={`border-t shadow-sm shadow-gray-100 ${
+      //   row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
+      // }`}
       className={`border-t shadow-sm shadow-gray-100 ${
         row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
-      }`}
+      } ${selectedRows.includes(row.id) ? "selected" : ""}`}
+      
       >
         {/* Checkbox */}
         <td className="p-4 text-center">
@@ -1655,21 +1648,6 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                 )}
               </div>
             </div>
-
-            {/* Render TradeForm as a modal if isTradeFormVisible is true */}
-            {/* {isTradeFormVisible && (
-              <div className="modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div className="relative w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
-                  <TradeForm onSubmit={handleFormSubmit} />
-                  <button
-                    onClick={handleClose}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )} */}
           </>
           <div>
             {submittedData.length > 0 ? (
@@ -1718,7 +1696,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                       })
                     .map((row, index) => (
                       <tr
-                      key={`${row.id}-${index}`}
+                      key={row.id}
                       onClick={() => handleRowClick(row.id)}
                       className={`border-t shadow-sm shadow-gray-100 ${
                         row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
