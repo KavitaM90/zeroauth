@@ -1,6 +1,6 @@
 {
   "name": "zeroauth",
-  "homepage": "https://kavitam90.github.io/zeroauth",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
