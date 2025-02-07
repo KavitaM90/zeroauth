@@ -962,7 +962,7 @@ const Position = () => {
 
           {/* Second Row: Stock Details Table */}
           <div>
-            {sortedData.length > 0 ? (
+            {submittedData.length > 0 ? (
               <table className=" table-fixed w-full">
                 <thead>
                   <tr className="text-customGray text-xm font-sans font-normal leading-4 border-t">
@@ -1002,15 +1002,7 @@ const Position = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...submittedData] // Create a new copy to prevent mutation
-                    .sort((a, b) => {
-                      if (a.position === "CLOSE" && b.position !== "CLOSE")
-                        return 1;
-                      if (a.position !== "CLOSE" && b.position === "CLOSE")
-                        return -1;
-                      return 0; // Keep original order for other cases
-                    })
-                    .map((row) => (
+                  {sortedData.map((row) => (
                       <tr
                         key={row.id} // Use unique id
                         onClick={() => handleRowClick(row.id)} // Pass id instead of index
