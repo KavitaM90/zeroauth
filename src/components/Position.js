@@ -328,6 +328,7 @@ const Position = () => {
       return (order[a.position] || 3) - (order[b.position] || 3);
     });
   }, [submittedData]);
+  console.log(sortedData);
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
       {/* Flex container for both tables */}
