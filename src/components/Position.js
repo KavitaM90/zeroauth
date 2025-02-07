@@ -13,7 +13,7 @@ import tele1 from "../assets/tele1.jpg";
 import { useMarketData } from "../custom/useMarketData";
 
 const Position = () => {
- // const [isTradeFormVisible, setIsTradeFormVisible] = useState(false);
+  // const [isTradeFormVisible, setIsTradeFormVisible] = useState(false);
   const [data, setData] = useState([]); // Store submitted form data
   const [currentPage, setCurrentPage] = useState(1);
   const [submittedData, setSubmittedData] = useState([]);
@@ -38,25 +38,22 @@ const Position = () => {
     const storedData = JSON.parse(localStorage.getItem("marketData")) || [];
     console.log("Data Retrieved from Local Storage:", storedData);
 
-  // Append new data
-  // const updatedData = [...storedData, data];
+    // Append new data
+    // const updatedData = [...storedData, data];
 
-  // // Save updated data to localStorage
-  // localStorage.setItem("marketData", JSON.stringify(updatedData));
-  // console.log("Data Saved in Local Storage:", JSON.parse(localStorage.getItem("marketData")));
-  // Append new data
-const updatedData = [...storedData, data];
+    // // Save updated data to localStorage
+    // localStorage.setItem("marketData", JSON.stringify(updatedData));
+    // console.log("Data Saved in Local Storage:", JSON.parse(localStorage.getItem("marketData")));
+    // Append new data
+    const updatedData = [...storedData, data];
 
-// Update state with new data
-setData(updatedData);  // Now, the 'data' state will hold the latest submitted data
+    // Update state with new data
+    setData(updatedData); // Now, the 'data' state will hold the latest submitted data
 
-// Save updated data to localStorage
-console.log("Market Data:", marketData);
-localStorage.setItem("marketData", JSON.stringify(updatedData));
-console.log("Updated Data in State:", updatedData);
-
-
-
+    // Save updated data to localStorage
+    console.log("Market Data:", marketData);
+    localStorage.setItem("marketData", JSON.stringify(updatedData));
+    console.log("Updated Data in State:", updatedData);
 
     setMarketData(data); // Update shared state
     setShowFormm(false); // Close the form modal
@@ -72,8 +69,8 @@ console.log("Updated Data in State:", updatedData);
     if (storedData.length > 0) {
       setMarketData(storedData);
     }
-  }, [setMarketData]);  // ✅ Added 'setMarketData' in dependencies
-  
+  }, [setMarketData]); // ✅ Added 'setMarketData' in dependencies
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null); // Define selectedRowId
   // Handle row click (opens modal)
@@ -91,7 +88,9 @@ console.log("Updated Data in State:", updatedData);
   // Confirm deletion of a row
   const confirmDeleteRow = () => {
     if (selectedRowId !== null) {
-      const updatedData = submittedData.filter((row) => row.id !== selectedRowId);
+      const updatedData = submittedData.filter(
+        (row) => row.id !== selectedRowId
+      );
       setSubmittedData(updatedData);
     }
     closeModal(); // Close modal after deletion
@@ -105,7 +104,6 @@ console.log("Updated Data in State:", updatedData);
       setSelectedRows([]);
     }
   };
-
 
   const onToggle = () => {
     setShowFormm((prevState) => !prevState);
@@ -167,7 +165,7 @@ console.log("Updated Data in State:", updatedData);
     percentageChange: "",
     strikePrice: "",
     totalProfit: "",
-    sellPrice:"",
+    sellPrice: "",
   });
 
   const toggleForm = () => {
@@ -189,24 +187,27 @@ console.log("Updated Data in State:", updatedData);
   // };
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     const newData = {
       ...formData,
       id: Date.now(), // Unique ID for each position
-      ltp: parseFloat(formData.minLTP), // Initial LTP is set to minLTP
+      ltp: parseFloat(formData.minLTP) || 0, // Ensure valid number
     };
+  
     console.log("Submitted Data:", newData);
-   // setSubmittedData([...submittedData, newData]);
-     // Update the submittedData state
-  const updatedData = [...submittedData, newData];
-  setSubmittedData(updatedData);
-
-  // Save to localStorage
-  localStorage.setItem("submittedData", JSON.stringify(updatedData));
-  // Retrieve and log the stored data
-  const storedData = JSON.parse(localStorage.getItem("submittedData"));
-  console.log("Data in Local Storage:", storedData);
-
+  
+    // Update the submittedData state
+    const updatedData = [...submittedData, newData];
+    setSubmittedData(updatedData);
+  
+    // Save to localStorage
+    localStorage.setItem("submittedData", JSON.stringify(updatedData));
+  
+    // Retrieve and log the stored data
+    const storedData = JSON.parse(localStorage.getItem("submittedData"));
+    console.log("Data in Local Storage:", storedData);
+  
+    // Reset the form data
     setFormData({
       position: "OPEN",
       action: "BUY",
@@ -223,11 +224,24 @@ console.log("Updated Data in State:", updatedData);
       percentageChange: "",
       strikePrice: "",
       totalProfit: "",
-      sellPrice:"",
+      sellPrice: "",
     });
+  
     setShowForm(false);
   };
-
+  
+  useEffect(() => {
+    fetchData().then((newData) => {
+      setSubmittedData((prevData) => {
+        const mergedData = [...newData].map((item) => {
+          const existingItem = prevData.find((prev) => prev.id === item.id);
+          return existingItem ? { ...existingItem, ...item } : item;
+        });
+        return mergedData.sort((a, b) => (a.position === "OPEN" ? -1 : 1));
+      });
+    });
+  }, []); // Runs only once when the component mounts
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setSubmittedData((prevData) => {
@@ -238,95 +252,74 @@ console.log("Updated Data in State:", updatedData);
             quantity,
             prevClose,
             averagePrice,
-            action, // Ensure `action` is part of the data structure
+            action,
             sellPrice,
           } = position;
-
+  
           const min = parseFloat(minLTP);
           const max = parseFloat(maxLTP);
-
-          if (min && max) {
+          const qty = parseInt(quantity, 10) || 0;
+          const avgPrice = parseFloat(averagePrice) || 0;
+          const sellPrc = parseFloat(sellPrice) || 0;
+  
+          if (!isNaN(min) && !isNaN(max) && max > min) {
             const steps = (max - min) / 0.05;
             const randomStep = Math.floor(Math.random() * steps);
             const newLTP = min + randomStep * 0.05;
-
-            // Calculate profit using the provided logic
-            const calculateProfit = ({
-              action,
-              buyPrice,
-              currentPrice,
-              position,
-              quantity,
-            }) => {
+  
+            // Profit calculation functions
+            const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
               if (action === "BUY") {
-                return (newLTP - averagePrice) * quantity;
+                return (newLTP - avgPrice) * qty;
               } else if (action === "SELL") {
-                return (averagePrice - newLTP) * quantity;
+                return (avgPrice - newLTP) * qty;
               }
-              return 0; // Default if action is not recognized
+              return 0;
             };
-
-            const profit = calculateProfit({
-              action,
-              averagePrice,
-              newLTP,
-              quantity,
-            });
-            const calculateCloseProfit = ({
-              action,
-              averagePrice,
-              sellPrice,
-              quantity,
-              position,
-            }) => {
-              // Only calculate for valid CLOSE actions
-              if ( action === "BUY") {
-                return (sellPrice - averagePrice) * quantity;
-              } else if ( action === "SELL") {
-                return (averagePrice - sellPrice) * quantity;
+  
+            const profit = calculateProfit({ action, newLTP, avgPrice, qty });
+  
+            const calculateCloseProfit = ({ action, avgPrice, sellPrc, qty }) => {
+              if (action === "BUY") {
+                return (sellPrc - avgPrice) * qty;
+              } else if (action === "SELL") {
+                return (avgPrice - sellPrc) * qty;
               }
-              return 0; // Default if action is not recognized
+              return 0;
             };
-            
-            // Example usage:
-            const profitClose = calculateCloseProfit({
-              action,          // BUY or SELL
-              averagePrice,    // Average price of the stock
-              sellPrice,       // Current selling price or LTP
-              quantity,        // Number of stocks
-              position,
-            });
+  
+            const profitClose = calculateCloseProfit({ action, avgPrice, sellPrc, qty });
             console.log("Profit for CLOSE position:", profitClose);
-            const totalCurrentAmount = newLTP * quantity;
+  
+            const totalCurrentAmount = newLTP * qty;
             const percentageChange = prevClose
               ? ((newLTP - prevClose) / prevClose) * 100
               : 0;
-
+  
             return {
               ...position,
               ltp: parseFloat(newLTP.toFixed(2)),
               totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
-              profit: parseFloat(profit.toFixed(2)), // Update profit using new logic
-              profitClose: parseFloat(profitClose.toFixed(2)), 
+              profit: parseFloat(profit.toFixed(2)),
+              profitClose: parseFloat(profitClose.toFixed(2)),
               percentageChange: parseFloat(percentageChange.toFixed(2)),
             };
           }
-          return position; // Return unmodified data if no min/max
+          return position; // Return unchanged if invalid min/max
         });
-
-        // Calculate the total profit by summing up all `profit` values
-        const totalProfit = updatedData.reduce((accumulator, entry) => {
-          return accumulator + (entry.profit || 0);
-        }, 0);
-
-        // Update the state for total profit
+  
+        // Calculate total profit
+        const totalProfit = updatedData.reduce((acc, entry) => acc + (entry.profit || 0), 0);
         setTotalProfit(totalProfit);
         console.log("Total Profit:", totalProfit);
-        return updatedData; // Return updated data for the state
+  
+        return updatedData;
       });
     }, 1000);
+  
     return () => clearInterval(interval); // Cleanup on component unmount
-  }, []);
+  }, []); // Removed `submittedData` dependency to prevent infinite loops
+  
 
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
@@ -334,122 +327,123 @@ console.log("Updated Data in State:", updatedData);
       <div className="flex flex-col lg:flex-row pl-1 lg:space-x-6 relative top-3">
         {/* Table 1: NIFTY/SENSEX Stock Data */}
         <div className="w-full lg:w-1/3 relative h-[90vh]">
-  {/* Content Container */}
-  <div className="absolute inset-0">
-    <div className="absolute inset-0 -top-3 -bottom-3 border-r border-gray-300 h-screen"></div>
-    
-    {/* First Row: Search Bar */}
-    <div className="flex justify-between mb-3 pt-0 relative border-b border-r border-gray-300 -ml-4">
-      <div className="relative w-full sm:w-full backdrop-brightness-200 mx-auto">
-        <input
-          type="text"
-          placeholder="Search eg: infy bse, nifty fut, gold mcx"
-          className="p-2 pl-10 pr-20 w-full text-textGray border-none text-xs font-sans font-normal focus:outline-none"
-        />
-        <MdOutlineSearch className="absolute top-2 left-2 w-4 h-4 text-textGray ml-2" />
-        <div className="absolute top-2 right-2 text-xs text-gray-400">
-          0/100
-        </div>
-      </div>
-    </div>
+          {/* Content Container */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 -top-3 -bottom-3 border-r border-gray-300 h-screen"></div>
 
-    {/* Second Row: Stock Data Table */}
-    <div className="overflow-y-auto custom-scrollbar max-h-[calc(90vh-80px)]">
-      {paginatedData.length === 0 ? (
-        <div className="flex justify-center items-center text-center text-gray-500 text-xl py-4 mt-5">
-          <div className="flex flex-col space-y-4 items-center">
-            <div className="bg-white">
-              <img
-                src={tele1}
-                alt="telescope"
-                className="w-16 h-12 mx-auto text-textGray bg-white"
-              />
+            {/* First Row: Search Bar */}
+            <div className="flex justify-between mb-3 pt-0 relative border-b border-r border-gray-300 -ml-4">
+              <div className="relative w-full sm:w-full backdrop-brightness-200 mx-auto">
+                <input
+                  type="text"
+                  placeholder="Search eg: infy bse, nifty fut, gold mcx"
+                  className="p-2 pl-10 pr-20 w-full text-textGray border-none text-xs font-sans font-normal focus:outline-none"
+                />
+                <MdOutlineSearch className="absolute top-2 left-2 w-4 h-4 text-textGray ml-2" />
+                <div className="absolute top-2 right-2 text-xs text-gray-400">
+                  0/100
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="font-[Open Sans] text-customGray text-xl font-normal leading-7">
-                Nothing here
-              </p>
+
+            {/* Second Row: Stock Data Table */}
+            <div className="overflow-y-auto custom-scrollbar max-h-[calc(90vh-80px)]">
+              {paginatedData.length === 0 ? (
+                <div className="flex justify-center items-center text-center text-gray-500 text-xl py-4 mt-5">
+                  <div className="flex flex-col space-y-4 items-center">
+                    <div className="bg-white">
+                      <img
+                        src={tele1}
+                        alt="telescope"
+                        className="w-16 h-12 mx-auto text-textGray bg-white"
+                      />
+                    </div>
+                    <div>
+                      <p className="font-[Open Sans] text-customGray text-xl font-normal leading-7">
+                        Nothing here
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-sans text-sm font-normal leading-4 text-left underline-offset-4">
+                        Use the search bar to add instruments
+                      </p>
+                    </div>
+                    <div>
+                      <button className="w-36 h-9 rounded bg-coustomBlue text-white text-base font-normal">
+                        Add Instrument
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <table className="w-full table-auto">
+                  <tbody>
+                    {paginatedData.map((row, index) => (
+                      <tr
+                        key={index}
+                        className="border-t shadow-sm shadow-gray-100"
+                      >
+                        <td className="p-2 text-customGray text-xs font-medium ml-1 truncate text-wrap">
+                          {row.stock}
+                          <span className="mr-1 text-center text-xxs text-labelGray">
+                            index
+                          </span>
+                        </td>
+                        <td className="p-1 text-customGray text-xs font-medium truncate text-wrap text-start w-8">
+                          {row.diff}
+                        </td>
+                        <td className="p-1 text-xs font-medium text-end w-8 text-wrap truncate">
+                          {parseFloat(row.percent) < 0 ? (
+                            <span className="flex items-center space-x-1">
+                              <span className="text-customGray">
+                                {row.percent ? row.percent.toFixed(2) : "0.00"}
+                              </span>
+                              <SlArrowDown className="text-stockRed" />
+                            </span>
+                          ) : (
+                            <span className="flex items-center space-x-1">
+                              <span className="text-customGray">
+                                {row.percent ? row.percent.toFixed(2) : "0.00"}
+                              </span>
+                              <SlArrowUp className="text-textGreen" />
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-1 text-customGray text-xs font-medium border-r text-end w-12 mr-1">
+                          {row.value}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
-            <div>
-              <p className="font-sans text-sm font-normal leading-4 text-left underline-offset-4">
-                Use the search bar to add instruments
-              </p>
-            </div>
-            <div>
-              <button className="w-36 h-9 rounded bg-coustomBlue text-white text-base font-normal">
-                Add Instrument
-              </button>
+
+            {/* Pagination and Settings Icon */}
+            <div className="fixed bottom-0 left-0 bg-white w-1/3 mx-auto shadow-md z-10 border-t border-r-2 border-gray-300">
+              <div className="flex justify-between items-center max-w-screen-xl mx-auto h-9">
+                <div className="flex overflow-x-auto">
+                  {[...Array(Math.max(totalPages, 7)).keys()].map((page) => (
+                    <button
+                      key={page + 1}
+                      onClick={() => handlePageChange(page + 1)}
+                      className={`py-1 text-xs ${
+                        currentPage === page + 1
+                          ? "bg-slate-50 text-red-400"
+                          : "bg-white text-headingGray border"
+                      } w-12 h-10`}
+                    >
+                      {page + 1}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center space-x-2 pr-2">
+                  <CiSettings className="w-6 h-6 text-customGray cursor-pointer" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      ) : (
-        <table className="w-full table-auto">
-          <tbody>
-            {paginatedData.map((row, index) => (
-              <tr key={index} className="border-t shadow-sm shadow-gray-100">
-                <td className="p-2 text-customGray text-xs font-medium ml-1 truncate text-wrap">
-                  {row.stock}
-                  <span className="mr-1 text-center text-xxs text-labelGray">
-                    index
-                  </span>
-                </td>
-                <td className="p-1 text-customGray text-xs font-medium truncate text-wrap text-start w-8">
-                  {row.diff}
-                </td>
-                <td className="p-1 text-xs font-medium text-end w-8 text-wrap truncate">
-                  {parseFloat(row.percent) < 0 ? (
-                    <span className="flex items-center space-x-1">
-                      <span className="text-customGray">
-                        {row.percent ? row.percent.toFixed(2) : "0.00"}
-                      </span>
-                      <SlArrowDown className="text-stockRed" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center space-x-1">
-                      <span className="text-customGray">
-                        {row.percent ? row.percent.toFixed(2) : "0.00"}
-                      </span>
-                      <SlArrowUp className="text-textGreen" />
-                    </span>
-                  )}
-                </td>
-                <td className="p-1 text-customGray text-xs font-medium border-r text-end w-12 mr-1">
-                  {row.value}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
-
-    {/* Pagination and Settings Icon */}
-    <div className="fixed bottom-0 left-0 bg-white w-1/3 mx-auto shadow-md z-10 border-t border-r-2 border-gray-300">
-      <div className="flex justify-between items-center max-w-screen-xl mx-auto h-9">
-        <div className="flex overflow-x-auto">
-          {[...Array(Math.max(totalPages, 7)).keys()].map((page) => (
-            <button
-              key={page + 1}
-              onClick={() => handlePageChange(page + 1)}
-              className={`py-1 text-xs ${
-                currentPage === page + 1
-                  ? "bg-slate-50 text-red-400"
-                  : "bg-white text-headingGray border"
-              } w-12 h-10`}
-            >
-              {page + 1}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center space-x-2 pr-2">
-          <CiSettings className="w-6 h-6 text-customGray cursor-pointer" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 
         {/* Table 2: Holdings Data */}
         <div className="w-full lg:w-2/3 font-sans overflow-y-auto custom-scrollbar h-[90vh]">
@@ -515,7 +509,7 @@ console.log("Updated Data in State:", updatedData);
                             </label>
                             <input
                               type="number"
-                              step="any" 
+                              step="any"
                               id="nifty-prev-close"
                               name="nifty-prev-close"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -535,7 +529,7 @@ console.log("Updated Data in State:", updatedData);
                             </label>
                             <input
                               type="text"
-                              step="any" 
+                              step="any"
                               id="nifty-min-ltp"
                               name="nifty-min-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -551,7 +545,7 @@ console.log("Updated Data in State:", updatedData);
                             </label>
                             <input
                               type="number"
-                              step="any" 
+                              step="any"
                               id="nifty-max-ltp"
                               name="nifty-max-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -586,7 +580,7 @@ console.log("Updated Data in State:", updatedData);
                             </label>
                             <input
                               type="number"
-                              step="any" 
+                              step="any"
                               id="sensex-prev-close"
                               name="sensex-prev-close"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -606,7 +600,7 @@ console.log("Updated Data in State:", updatedData);
                             </label>
                             <input
                               type="number"
-                              step="any" 
+                              step="any"
                               id="sensex-min-ltp"
                               name="sensex-min-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -622,7 +616,7 @@ console.log("Updated Data in State:", updatedData);
                             </label>
                             <input
                               type="number"
-                              step="any" 
+                              step="any"
                               id="sensex-max-ltp"
                               name="sensex-max-ltp"
                               className="w-full mt-1 px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -968,394 +962,401 @@ console.log("Updated Data in State:", updatedData);
 
           {/* Second Row: Stock Details Table */}
           <div>
-            {submittedData.length > 0 ? (
-<table className=" table-fixed w-full">
-<thead>
-  <tr className="text-customGray text-xm font-sans font-normal leading-4 border-t">
-    {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
-    <th className="p-4 text-start font-sans text-headingGray font-normal w-3 h-11">
+            {sortedData.length > 0 ? (
+              <table className=" table-fixed w-full">
+                <thead>
+                  <tr className="text-customGray text-xm font-sans font-normal leading-4 border-t">
+                    {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
+                    <th className="p-4 text-start font-sans text-headingGray font-normal w-3 h-11">
                       <input
-                         type="checkbox"
-                         onChange={handleSelectAll}
+                        type="checkbox"
+                        onChange={handleSelectAll}
                         checked={
-                           selectedRows.length > 0 &&
-                           selectedRows.length === data.length
-                         }
-                       />
-                     </th>
-    <th className="p-4 text-start font-sans text-headingGray font-normal w-20 h-11">
-      Product
-    </th>
-    <th className="p-4 text-headingGray text-start font-sans font-normal w-40 h-11">
-      Instrument
-    </th>
-    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
-      Qty.
-    </th>
-    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
-      Avg.
-    </th>
-    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
-      LTP
-    </th>
-    <th className="p-4 text-end font-sans font-normal text-headingGray bg-slate-50 w-24 h-11">
-      P&L
-    </th>
-    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
-      Chg.
-    </th>
-    <th className="w-2 h-11"></th>
-  </tr>
-</thead>
-<tbody>
-  {[...submittedData] // Create a new copy to prevent mutation
-  .sort((a, b) => {
-    if (a.position === "CLOSE" && b.position !== "CLOSE") return 1;
-    if (a.position !== "CLOSE" && b.position === "CLOSE") return -1;
-    return 0; // Keep original order for other cases
-  })
-  .map((row) => (
-      <tr
-      key={row.id} // Use unique id
-      onClick={() => handleRowClick(row.id)} // Pass id instead of index
-      // className={`border-t shadow-sm shadow-gray-100 ${
-      //   row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
-      // }`}
-      className={`border-t shadow-sm shadow-gray-100 ${
-        row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
-      } ${selectedRows.includes(row.id) ? "selected" : ""}`}
-      
-      >
-        {/* Checkbox */}
-        <td className="p-4 text-center">
-        <input
-            type="checkbox"
-            checked={selectedRows.includes(row.id)}
-            onChange={() => handleRowSelect(row.id)}
-          />
-        </td>
+                          selectedRows.length > 0 &&
+                          selectedRows.length === data.length
+                        }
+                      />
+                    </th>
+                    <th className="p-4 text-start font-sans text-headingGray font-normal w-20 h-11">
+                      Product
+                    </th>
+                    <th className="p-4 text-headingGray text-start font-sans font-normal w-40 h-11">
+                      Instrument
+                    </th>
+                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                      Qty.
+                    </th>
+                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                      Avg.
+                    </th>
+                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                      LTP
+                    </th>
+                    <th className="p-4 text-end font-sans font-normal text-headingGray bg-slate-50 w-24 h-11">
+                      P&L
+                    </th>
+                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                      Chg.
+                    </th>
+                    <th className="w-2 h-11"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...submittedData] // Create a new copy to prevent mutation
+                    .sort((a, b) => {
+                      if (a.position === "CLOSE" && b.position !== "CLOSE")
+                        return 1;
+                      if (a.position !== "CLOSE" && b.position === "CLOSE")
+                        return -1;
+                      return 0; // Keep original order for other cases
+                    })
+                    .map((row) => (
+                      <tr
+                        key={row.id} // Use unique id
+                        onClick={() => handleRowClick(row.id)} // Pass id instead of index
+                        // className={`border-t shadow-sm shadow-gray-100 ${
+                        //   row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
+                        // }`}
+                        className={`border-t shadow-sm shadow-gray-100 ${
+                          row.position === "CLOSE"
+                            ? "bg-rowDisable !text-disableText"
+                            : ""
+                        } ${selectedRows.includes(row.id) ? "selected" : ""}`}
+                      >
+                        {/* Checkbox */}
+                        <td className="p-4 text-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(row.id)}
+                            onChange={() => handleRowSelect(row.id)}
+                          />
+                        </td>
 
-        {/* Order Type */}
-        <td className="p-4 text-cellGray text-xs font-normal text-center">
-          <span
-            className={`h-5 w-12 flex justify-center items-center -ml-1 ${
-              row.position === "CLOSE" &&
-              (row.expiryType === "Weekly" ||
-                row.expiryType === "Monthly")
-                ? "!bg-bgOff !text-disableText"
-                : row.orderType === "MIS"
-                ? "bg-productBg text-textProduct"
-                : row.orderType === "NRML"
-                ? "bg-purple-100 text-purple-800"
-                : ""
-            }`}
-          >
-            {row.orderType}
-          </span>
-        </td>
+                        {/* Order Type */}
+                        <td className="p-4 text-cellGray text-xs font-normal text-center">
+                          <span
+                            className={`h-5 w-12 flex justify-center items-center -ml-1 ${
+                              row.position === "CLOSE" &&
+                              (row.expiryType === "Weekly" ||
+                                row.expiryType === "Monthly")
+                                ? "!bg-bgOff !text-disableText"
+                                : row.orderType === "MIS"
+                                ? "bg-productBg text-textProduct"
+                                : row.orderType === "NRML"
+                                ? "bg-purple-100 text-purple-800"
+                                : ""
+                            }`}
+                          >
+                            {row.orderType}
+                          </span>
+                        </td>
 
-        {/* Stock Details */}
-        <td
-          className={`p-4 text-start text-sm font-normal  flex items-center justify-start ${
-            row.position === "CLOSE"
-              ? "!bg-rowDisable !text-disableText"
-              : "text-customGray"
-          }`}
-        >
-          <span className="mx-1 text-labelGray tracking-wider">
-            {  row.marketType === "NSE" &&
-          (row.expiryType === "Monthly") &&
-           row.position === "CLOSE" 
-          ? (
-          <>
-            <span className="flex items-center whitespace-nowrap space-x-1">
-              <span className="text-headingGray text-sm uppercase">
-                {row.stockName}
-              </span>
-              <span className="text-secheadingGray text-xs mt-[1px]">
-                {row.marketType}
-              </span>
-            </span>
-          </>
-        ) : row.marketType === "NSE" && 
-            (row.position === "OPEN") &&
-             (row.expiryType === "Monthly"||"Weekly") ? (
-            <>
-              <span className="flex items-center whitespace-nowrap space-x-1">
-                <span className="text-customGray text-sm uppercase">
-                  {row.stockName}
-                </span>
-                <span className="text-marketGray text-xs mt-[1px]">
-                  {row.marketType}
-                </span>
-              </span>
-            </>
-          ):
-            (row.marketType === "NFO"||"BFO"||"MCX") && row.position === "CLOSE" &&
-            row.expiryType === "Monthly" ? (
-              <>
-                <span className="flex items-center whitespace-nowrap space-x-1">
-                  <span className="text-headingGray text-sm uppercase">
-                    {row.stockName}
-                  </span>
-                  <span className="text-headingGray text-sm">
-                    {row.buyPrice}
-                  </span>
-                  <span className="text-secheadingGray text-xs mt-[1px]">
-                    {row.marketType}
-                  </span>
-                </span>
-              </>
-            ) : row.marketType === "NSE" && 
-            (row.position === "OPEN") &&
-             (row.expiryType === "Monthly"||"Weekly") ? (
-            <>
-              <span className="flex items-center whitespace-nowrap space-x-1">
-                <span className="text-customGray text-sm uppercase">
-                  {row.stockName}
-                </span>
-                <span className="text-marketGray text-xs mt-[1px]">
-                  {row.marketType}
-                </span>
-              </span>
-            </>
-          ) : row.marketType === "NSE" &&
-          (row.expiryType === "Weekly") &&
-           row.position === "CLOSE" 
-          ? (
-          <>
-            <span className="flex items-center whitespace-nowrap space-x-1">
-              <span className="text-headingGray text-sm uppercase">
-                {row.stockName}
-              </span>
-              <span className="text-secheadingGray text-xs mt-[1px]">
-                {row.marketType}
-              </span>
-            </span>
-          </>
-        ) : row.position === "OPEN" &&
-              row.expiryType === "Weekly" &&
-              (row.marketType === "NFO"||"MCX"||"BFO")  ? (
-              <>
-                <span className="flex items-center whitespace-nowrap space-x-1">
-                  <span className="text-customGray text-sm uppercase">
-                    {row.stockName}
-                  </span>
-                  <span className="text-sm text-customGray">
-                    {row.date}
-                    <sup className="text-xms text-customGray">
-                      {row.thRdNd}
-                    </sup>
-                  </span>
-                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                      W
-                    </span>
-                  </span>
-                  <span className="text-sm text-customGray">
-                    {row.buyPrice}
-                  </span>
-                  <span className="text-marketGray text-xs mt-[1px]">
-                    {row.marketType}
-                  </span>
-                </span>
-              </>
-            ) : row.position === "CLOSE" &&
-              row.expiryType === "Weekly" &&
-              (row.marketType === "NFO"||"MCX"||"BFO") ? (
-              <>
-                <span className="flex items-center whitespace-nowrap space-x-1">
-                  <span className="text-headingGray text-sm uppercase">
-                    {row.stockName}
-                  </span>
-                  <span className="text-sm text-headingGray">
-                    {row.date}
-                    <sup className="text-xms text-headingGray">
-                      {row.thRdNd}
-                    </sup>
-                  </span>
-                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                      W
-                    </span>
-                  </span>
-                  <span className="text-sm text-headingGray">
-                    {row.buyPrice}
-                  </span>
-                  <span className="text-secheadingGray text-xs mt-[1px]">
-                    {row.marketType}
-                  </span>
-                </span>
-              </>
-            ) : row.position === "OPEN" &&
-            row.expiryType === "Monthly" &&
-            (row.marketType === "MCX"|| "BFO"||"NFO" )? (
-            <>
-              <span className="flex items-center whitespace-nowrap space-x-1">
-                <span className="text-customGray text-sm uppercase">
-                  {row.stockName}
-                </span>
-                <span className="text-customGray text-sm">
-                  {row.buyPrice}
-                </span>
-                <span className="text-marketGray text-xs mt-[1px]">
-                  {row.marketType}
-                </span>
-              </span>
-            </>
-          ): (
-              <>
-                <span className="flex items-center whitespace-nowrap space-x-1">
-                  <span className="text-customGray text-sm uppercase">
-                    {row.stockName}
-                  </span>
-                  <span className="text-sm text-customGray">
-                    {row.date}
-                    <sup className="text-xms text-customGray">
-                      {row.thRdNd}
-                    </sup>
-                  </span>
-                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                      W
-                    </span>
-                  </span>
-                  <span className="text-sm text-customGray">
-                    {row.buyPrice}
-                  </span>
-                  <span className="text-marketGray text-xs mt-[1px]">
-                    {row.marketType}
-                  </span>
-                </span>
-              </>
-            )}
-          </span>
-        </td>
+                        {/* Stock Details */}
+                        <td
+                          className={`p-4 text-start text-sm font-normal  flex items-center justify-start ${
+                            row.position === "CLOSE"
+                              ? "!bg-rowDisable !text-disableText"
+                              : "text-customGray"
+                          }`}
+                        >
+                          <span className="mx-1 text-labelGray tracking-wider">
+                            {row.marketType === "NSE" &&
+                            row.expiryType === "Monthly" &&
+                            row.position === "CLOSE" ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-headingGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-secheadingGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.marketType === "NSE" &&
+                              row.position === "OPEN" &&
+                              (row.expiryType === "Monthly" || "Weekly") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : (row.marketType === "NFO" || "BFO" || "MCX") &&
+                              row.position === "CLOSE" &&
+                              row.expiryType === "Monthly" ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-headingGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-headingGray text-sm">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-secheadingGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.marketType === "NSE" &&
+                              row.position === "OPEN" &&
+                              (row.expiryType === "Monthly" || "Weekly") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.marketType === "NSE" &&
+                              row.expiryType === "Weekly" &&
+                              row.position === "CLOSE" ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-headingGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-secheadingGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.position === "OPEN" &&
+                              row.expiryType === "Weekly" &&
+                              (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-sm text-customGray">
+                                    {row.date}
+                                    <sup className="text-xms text-customGray">
+                                      {row.thRdNd}
+                                    </sup>
+                                  </span>
+                                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                      W
+                                    </span>
+                                  </span>
+                                  <span className="text-sm text-customGray">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.position === "CLOSE" &&
+                              row.expiryType === "Weekly" &&
+                              (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-headingGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-sm text-headingGray">
+                                    {row.date}
+                                    <sup className="text-xms text-headingGray">
+                                      {row.thRdNd}
+                                    </sup>
+                                  </span>
+                                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                      W
+                                    </span>
+                                  </span>
+                                  <span className="text-sm text-headingGray">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-secheadingGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.position === "OPEN" &&
+                              row.expiryType === "Monthly" &&
+                              (row.marketType === "MCX" || "BFO" || "NFO") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-customGray text-sm">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-sm text-customGray">
+                                    {row.date}
+                                    <sup className="text-xms text-customGray">
+                                      {row.thRdNd}
+                                    </sup>
+                                  </span>
+                                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                      W
+                                    </span>
+                                  </span>
+                                  <span className="text-sm text-customGray">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            )}
+                          </span>
+                        </td>
 
-        {/* Additional Columns (Action, Buy Price, etc.) */}
-        <td
-          className={`p-4 text-sm font-normal text-end ${
-            row.position === "CLOSE"
-              ? "!bg-rowDisable !text-disableText"
-              : row.action === "BUY"
-              ? "text-scaleBlue"
-              : row.action === "SELL"
-              ? "text-stockRed"
-              : "text-stockDefault"
-          }`}
-        >
-          {row.position === "CLOSE"
-            ? "0"
-            : `${row.action === "SELL" ? "-" : ""}${Math.abs(
-                parseFloat(row.quantity || 0)
-              ).toLocaleString("en-IN", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}`}
-        </td>
-        {/* Conditional rendering for averagePrice */}
-        <td
-          className={`p-4 text-cellGray text-sm font-normal
+                        {/* Additional Columns (Action, Buy Price, etc.) */}
+                        <td
+                          className={`p-4 text-sm font-normal text-end ${
+                            row.position === "CLOSE"
+                              ? "!bg-rowDisable !text-disableText"
+                              : row.action === "BUY"
+                              ? "text-scaleBlue"
+                              : row.action === "SELL"
+                              ? "text-stockRed"
+                              : "text-stockDefault"
+                          }`}
+                        >
+                          {row.position === "CLOSE"
+                            ? "0"
+                            : `${row.action === "SELL" ? "-" : ""}${Math.abs(
+                                parseFloat(row.quantity || 0)
+                              ).toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}`}
+                        </td>
+                        {/* Conditional rendering for averagePrice */}
+                        <td
+                          className={`p-4 text-cellGray text-sm font-normal
              text-end ${
-            row.position === "CLOSE"
-              ? "!bg-rowDisable !text-disableText"
-              : ""
-          }`}
-        >
-          {row.position === "CLOSE"
-            ? "0.00"
-            : parseFloat(row.averagePrice || 0).toLocaleString(
-                "en-IN",
-                {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }
-              )}
-        </td>
-        {/* Conditional rendering for LTP */}
-        <td
-          className={`p-4 text-cellGray text-sm font-normal text-end ${
-            row.position === "CLOSE"
-              ? "!bg-rowDisable !text-disableText"
-              : ""
-          }`}
-        >
-          {parseFloat(row.ltp || 0) >= 0 ? "" : ""}
-          {parseFloat(row.ltp || 0).toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td
-className={`p-4 text-sm font-normal text-end ${
-row.position === "CLOSE"
-? "!bg-rowDisable !text-disableText"
-: parseFloat(row.profit || 0) >= 0
-? "bg-slate-50 text-textGreen"
-: "bg-slate-50 text-stockRed"
-}`}
->
-{row.position === "CLOSE"
-? parseFloat(row.profitClose || 0) >= 0
-? "+"
-: ""
-: parseFloat(row.profit || 0) >= 0
-? "+"
-: ""}
-{row.position === "CLOSE"
-? parseFloat(row.profitClose || 0).toLocaleString("en-IN", {
-minimumFractionDigits: 2,
-maximumFractionDigits: 2,
-})
-: parseFloat(row.profit || 0).toLocaleString("en-IN", {
-minimumFractionDigits: 2,
-maximumFractionDigits: 2,
-})}
-</td>
+               row.position === "CLOSE"
+                 ? "!bg-rowDisable !text-disableText"
+                 : ""
+             }`}
+                        >
+                          {row.position === "CLOSE"
+                            ? "0.00"
+                            : parseFloat(row.averagePrice || 0).toLocaleString(
+                                "en-IN",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}
+                        </td>
+                        {/* Conditional rendering for LTP */}
+                        <td
+                          className={`p-4 text-cellGray text-sm font-normal text-end ${
+                            row.position === "CLOSE"
+                              ? "!bg-rowDisable !text-disableText"
+                              : ""
+                          }`}
+                        >
+                          {parseFloat(row.ltp || 0) >= 0 ? "" : ""}
+                          {parseFloat(row.ltp || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td
+                          className={`p-4 text-sm font-normal text-end ${
+                            row.position === "CLOSE"
+                              ? "!bg-rowDisable !text-disableText"
+                              : parseFloat(row.profit || 0) >= 0
+                              ? "bg-slate-50 text-textGreen"
+                              : "bg-slate-50 text-stockRed"
+                          }`}
+                        >
+                          {row.position === "CLOSE"
+                            ? parseFloat(row.profitClose || 0) >= 0
+                              ? "+"
+                              : ""
+                            : parseFloat(row.profit || 0) >= 0
+                            ? "+"
+                            : ""}
+                          {row.position === "CLOSE"
+                            ? parseFloat(row.profitClose || 0).toLocaleString(
+                                "en-IN",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )
+                            : parseFloat(row.profit || 0).toLocaleString(
+                                "en-IN",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}
+                        </td>
 
-        <td
-          className={`p-4 text-xs font-normal text-end ${
-            row.position === "CLOSE"
-              ? "!bg-rowDisable !text-disableText"
-              : parseFloat(row.percentageChange || 0) >= 0
-              ? "text-textGreen"
-              : "text-stockRed"
-          }`}
-        >
-          {row.position === "CLOSE"
-            ? "0.00%"
-            : `${parseFloat(row.percentageChange || 0).toFixed(
-                2
-              )}%`}
-        </td>
-      </tr>
-    ))}
-</tbody>
+                        <td
+                          className={`p-4 text-xs font-normal text-end ${
+                            row.position === "CLOSE"
+                              ? "!bg-rowDisable !text-disableText"
+                              : parseFloat(row.percentageChange || 0) >= 0
+                              ? "text-textGreen"
+                              : "text-stockRed"
+                          }`}
+                        >
+                          {row.position === "CLOSE"
+                            ? "0.00%"
+                            : `${parseFloat(row.percentageChange || 0).toFixed(
+                                2
+                              )}%`}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
 
-<tfoot>
-  <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
-    <td colSpan="4" className="p-4"></td>
+                <tfoot>
+                  <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
+                    <td colSpan="4" className="p-4"></td>
 
-    <td className="p-4"></td>
-    <td className="p-4 text-end">Total P&L</td>
+                    <td className="p-4"></td>
+                    <td className="p-4 text-end">Total P&L</td>
 
-    <td
-      className={`p-4 text-sm font-normal text-end text-wrap truncate 
+                    <td
+                      className={`p-4 text-sm font-normal text-end text-wrap truncate 
 ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
-    >
-      {parseFloat(totalProfit || 0) >= 0
-        ? `+${(totalProfit || 0).toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}`
-        : (totalProfit || 0).toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-    </td>
-  </tr>
-</tfoot>
-</table>
+                    >
+                      {parseFloat(totalProfit || 0) >= 0
+                        ? `+${(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`
+                        : (totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             ) : (
               <p className="text-center text-gray-600">No data available</p>
             )}
@@ -1681,26 +1682,37 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                 </thead>
                 <tbody>
                   {submittedData
-                       .sort((a, b) => {
-                        if (a.position === "OPEN" && b.position !== "OPEN") {
-                          return -1; // a comes before b
-                        } else if (a.position !== "OPEN" && b.position === "OPEN") {
-                          return 1; // b comes before a
-                        } else if (a.position === "CLOSE" && b.position !== "CLOSE") {
-                          return 1; // a comes after b
-                        } else if (a.position !== "CLOSE" && b.position === "CLOSE") {
-                          return -1; // b comes after a
-                        } else {
-                          return 0; // keep the original order if they are the same
-                        }
-                      })
+                    .sort((a, b) => {
+                      if (a.position === "OPEN" && b.position !== "OPEN") {
+                        return -1; // a comes before b
+                      } else if (
+                        a.position !== "OPEN" &&
+                        b.position === "OPEN"
+                      ) {
+                        return 1; // b comes before a
+                      } else if (
+                        a.position === "CLOSE" &&
+                        b.position !== "CLOSE"
+                      ) {
+                        return 1; // a comes after b
+                      } else if (
+                        a.position !== "CLOSE" &&
+                        b.position === "CLOSE"
+                      ) {
+                        return -1; // b comes after a
+                      } else {
+                        return 0; // keep the original order if they are the same
+                      }
+                    })
                     .map((row, index) => (
                       <tr
-                      key={row.id}
-                      onClick={() => handleRowClick(row.id)}
-                      className={`border-t shadow-sm shadow-gray-100 ${
-                        row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
-                      }`}
+                        key={row.id}
+                        onClick={() => handleRowClick(row.id)}
+                        className={`border-t shadow-sm shadow-gray-100 ${
+                          row.position === "CLOSE"
+                            ? "bg-rowDisable !text-disableText"
+                            : ""
+                        }`}
                       >
                         {/* Checkbox */}
                         {/* <td className="p-4 text-center">
@@ -1739,36 +1751,35 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                           }`}
                         >
                           <span className="mx-1 text-labelGray tracking-wider">
-                            {  row.marketType === "NSE" &&
-                          (row.expiryType === "Monthly") &&
-                           row.position === "CLOSE" 
-                          ? (
-                          <>
-                            <span className="flex items-center whitespace-nowrap space-x-1">
-                              <span className="text-headingGray text-sm uppercase">
-                                {row.stockName}
-                              </span>
-                              <span className="text-secheadingGray text-xs mt-[1px] ">
-                                {row.marketType}
-                              </span>
-                            </span>
-                          </>
-                        ) : row.marketType === "NSE" && 
-                            (row.position === "OPEN") &&
-                             (row.expiryType === "Monthly"||"Weekly") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
+                            {row.marketType === "NSE" &&
+                            row.expiryType === "Monthly" &&
+                            row.position === "CLOSE" ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-headingGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-secheadingGray text-xs mt-[1px] ">
+                                    {row.marketType}
+                                  </span>
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
-                                  {row.marketType}
+                              </>
+                            ) : row.marketType === "NSE" &&
+                              row.position === "OPEN" &&
+                              (row.expiryType === "Monthly" || "Weekly") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
                                 </span>
-                              </span>
-                            </>
-                          ):
-                            (row.marketType === "NFO"||"BFO"||"MCX") && row.position === "CLOSE" &&
-                            row.expiryType === "Monthly" ? (
+                              </>
+                            ) : (row.marketType === "NFO" || "BFO" || "MCX") &&
+                              row.position === "CLOSE" &&
+                              row.expiryType === "Monthly" ? (
                               <>
                                 <span className="flex items-center whitespace-nowrap space-x-1">
                                   <span className="text-headingGray text-sm uppercase">
@@ -1782,36 +1793,35 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                   </span>
                                 </span>
                               </>
-                            ) : row.marketType === "NSE" && 
-                            (row.position === "OPEN") &&
-                             (row.expiryType === "Monthly"||"Weekly") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
+                            ) : row.marketType === "NSE" &&
+                              row.position === "OPEN" &&
+                              (row.expiryType === "Monthly" || "Weekly") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : row.marketType === "NSE" &&
-                          (row.expiryType === "Weekly") &&
-                           row.position === "CLOSE" 
-                          ? (
-                          <>
-                            <span className="flex items-center whitespace-nowrap space-x-1">
-                              <span className="text-headingGray text-sm uppercase">
-                                {row.stockName}
-                              </span>
-                              <span className="text-secheadingGray text-xs mt-[1px]">
-                                {row.marketType}
-                              </span>
-                            </span>
-                          </>
-                        ) : row.position === "OPEN" &&
+                              </>
+                            ) : row.marketType === "NSE" &&
                               row.expiryType === "Weekly" &&
-                              (row.marketType === "NFO"||"MCX"||"BFO")  ? (
+                              row.position === "CLOSE" ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-headingGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-secheadingGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+                                </span>
+                              </>
+                            ) : row.position === "OPEN" &&
+                              row.expiryType === "Weekly" &&
+                              (row.marketType === "NFO" || "MCX" || "BFO") ? (
                               <>
                                 <span className="flex items-center whitespace-nowrap space-x-1">
                                   <span className="text-customGray text-sm uppercase">
@@ -1838,7 +1848,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                               </>
                             ) : row.position === "CLOSE" &&
                               row.expiryType === "Weekly" &&
-                              (row.marketType === "NFO"||"MCX"||"BFO") ? (
+                              (row.marketType === "NFO" || "MCX" || "BFO") ? (
                               <>
                                 <span className="flex items-center whitespace-nowrap space-x-1">
                                   <span className="text-headingGray text-sm uppercase">
@@ -1864,22 +1874,22 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                 </span>
                               </>
                             ) : row.position === "OPEN" &&
-                            row.expiryType === "Monthly" &&
-                            (row.marketType === "MCX"|| "BFO"||"NFO" )? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
+                              row.expiryType === "Monthly" &&
+                              (row.marketType === "MCX" || "BFO" || "NFO") ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-customGray text-sm">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
                                 </span>
-                                <span className="text-customGray text-sm">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ): (
+                              </>
+                            ) : (
                               <>
                                 <span className="flex items-center whitespace-nowrap space-x-1">
                                   <span className="text-customGray text-sm uppercase">
@@ -1933,10 +1943,10 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                         <td
                           className={`p-4 text-cellGray text-sm font-normal
                              text-end ${
-                            row.position === "CLOSE"
-                              ? "!bg-rowDisable !text-disableText"
-                              : ""
-                          }`}
+                               row.position === "CLOSE"
+                                 ? "!bg-rowDisable !text-disableText"
+                                 : ""
+                             }`}
                         >
                           {row.position === "CLOSE"
                             ? "0.00"
@@ -1963,31 +1973,37 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                           })}
                         </td>
                         <td
-  className={`p-4 text-sm font-normal text-end ${
-    row.position === "CLOSE"
-      ? "!bg-rowDisable !text-disableText"
-      : parseFloat(row.profit || 0) >= 0
-      ? "bg-slate-50 text-textGreen"
-      : "bg-slate-50 text-stockRed"
-  }`}
->
-  {row.position === "CLOSE"
-    ? parseFloat(row.profitClose || 0) >= 0
-      ? "+"
-      : ""
-    : parseFloat(row.profit || 0) >= 0
-    ? "+"
-    : ""}
-  {row.position === "CLOSE"
-    ? parseFloat(row.profitClose || 0).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })
-    : parseFloat(row.profit || 0).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-</td>
+                          className={`p-4 text-sm font-normal text-end ${
+                            row.position === "CLOSE"
+                              ? "!bg-rowDisable !text-disableText"
+                              : parseFloat(row.profit || 0) >= 0
+                              ? "bg-slate-50 text-textGreen"
+                              : "bg-slate-50 text-stockRed"
+                          }`}
+                        >
+                          {row.position === "CLOSE"
+                            ? parseFloat(row.profitClose || 0) >= 0
+                              ? "+"
+                              : ""
+                            : parseFloat(row.profit || 0) >= 0
+                            ? "+"
+                            : ""}
+                          {row.position === "CLOSE"
+                            ? parseFloat(row.profitClose || 0).toLocaleString(
+                                "en-IN",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )
+                            : parseFloat(row.profit || 0).toLocaleString(
+                                "en-IN",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}
+                        </td>
 
                         <td
                           className={`p-4 text-xs font-normal text-end ${
@@ -2011,8 +2027,9 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                 <tfoot>
                   <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
                     <td colSpan="4" className="p-4"></td>
-                   <td className="p-4 text-end">Total P&L</td>
- <td className={`p-4 text-sm font-normal text-end text-wrap truncate 
+                    <td className="p-4 text-end">Total P&L</td>
+                    <td
+                      className={`p-4 text-sm font-normal text-end text-wrap truncate 
   ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     >
                       {parseFloat(totalProfit || 0) >= 0
@@ -2042,149 +2059,153 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
           </div>
           {/* Breakdown with scales */}
           <div className="block items-center space-x-4 mt-4">
-  <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
-    Breakdown
-  </span>
+            <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
+              Breakdown
+            </span>
 
-  {submittedData
-    .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
-    .map((item, index) => (
-      <div key={index}>
-        {/* Container for each stock's P&L line */}
-        <div className="relative flex-grow mt-4">
-          {/* Positive P&L Line (Blue) */}
-          {item.profit > 0 && (
-            <div
-              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
-              style={{
-                width: `${Math.min((item.profit / 100) * 50, 50)}%`,
-              }}
-            />
-          )}
+            {submittedData
+              .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
+              .map((item, index) => (
+                <div key={index}>
+                  {/* Container for each stock's P&L line */}
+                  <div className="relative flex-grow mt-4">
+                    {/* Positive P&L Line (Blue) */}
+                    {item.profit > 0 && (
+                      <div
+                        className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
+                        style={{
+                          width: `${Math.min((item.profit / 100) * 50, 50)}%`,
+                        }}
+                      />
+                    )}
 
-          {/* Negative P&L Line (Red) */}
-          {item.profit < 0 && (
-            <div
-              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
-              style={{
-                width: `${Math.min((Math.abs(item.profit) / 100) * 50, 50)}%`,
-                transform: "translateX(-100%)",
-              }}
-            />
-          )}
+                    {/* Negative P&L Line (Red) */}
+                    {item.profit < 0 && (
+                      <div
+                        className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
+                        style={{
+                          width: `${Math.min(
+                            (Math.abs(item.profit) / 100) * 50,
+                            50
+                          )}%`,
+                          transform: "translateX(-100%)",
+                        }}
+                      />
+                    )}
 
-          {/* Labels for positive P&L */}
-          {(item.action === "SELL" ? item.profitClose : item.profit) > 0 && (
-            <div className="absolute w-40 top-1/2 transform -translate-y-1/2 left-[calc(50%-167px)] ">
-              {item.expiryType === "Weekly" &&
-              (item.marketType === "MCX" ||
-                item.marketType === "BFO" ||
-                item.marketType === "NFO") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal ml-1">
-                    {item.date}
-                    <sup className="text-xms text-customGray">
-                      {item.thRdNd}
-                    </sup>
-                  </span>
-                  <span className="text-customGray text-xs font-normal ml-1">
-                    {item.buyPrice}
-                  </span>
-                  <span className="text-customGray text-xs font-normal ml-1">
-                    ({item.orderType})
-                  </span>
-                </>
-              ) : item.marketType === "NSE" &&
-                (item.expiryType === "Weekly" || "Monthly") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal ml-1">
-                    ({item.marketType})
-                  </span>
-                </>
-              ) : item.expiryType === "Monthly" &&
-                (item.marketType === "MCX" ||
-                  item.marketType === "BFO" ||
-                  item.marketType === "NFO") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal ml-1">
-                    {item.buyPrice}
-                  </span>
-                  <span className="text-customGray text-xs font-normal ml-1">
-                    ({item.marketType})
-                  </span>
-                </>
-              ) : null}
-            </div>
-          )}
+                    {/* Labels for positive P&L */}
+                    {(item.action === "SELL" ? item.profitClose : item.profit) >
+                      0 && (
+                      <div className="absolute w-40 top-1/2 transform -translate-y-1/2 left-[calc(50%-167px)] ">
+                        {item.expiryType === "Weekly" &&
+                        (item.marketType === "MCX" ||
+                          item.marketType === "BFO" ||
+                          item.marketType === "NFO") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal ml-1">
+                              {item.date}
+                              <sup className="text-xms text-customGray">
+                                {item.thRdNd}
+                              </sup>
+                            </span>
+                            <span className="text-customGray text-xs font-normal ml-1">
+                              {item.buyPrice}
+                            </span>
+                            <span className="text-customGray text-xs font-normal ml-1">
+                              ({item.orderType})
+                            </span>
+                          </>
+                        ) : item.marketType === "NSE" &&
+                          (item.expiryType === "Weekly" || "Monthly") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal ml-1">
+                              ({item.marketType})
+                            </span>
+                          </>
+                        ) : item.expiryType === "Monthly" &&
+                          (item.marketType === "MCX" ||
+                            item.marketType === "BFO" ||
+                            item.marketType === "NFO") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal ml-1">
+                              {item.buyPrice}
+                            </span>
+                            <span className="text-customGray text-xs font-normal ml-1">
+                              ({item.marketType})
+                            </span>
+                          </>
+                        ) : null}
+                      </div>
+                    )}
 
-          {/* Labels for negative P&L */}
-          {(item.action === "SELL" ? item.profitClose : item.profit) < 0 && (
-            <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
-              {item.expiryType === "Weekly" &&
-              (item.marketType === "MCX" ||
-                item.marketType === "BFO" ||
-                item.marketType === "NFO") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    {item.date}
-                    <sup className="text-xms text-customGray">
-                      {item.thRdNd}
-                    </sup>
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    {item.buyPrice}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    ({item.orderType})
-                  </span>
-                </>
-              ) : item.marketType === "NSE" &&
-                (item.expiryType === "Weekly" || "Monthly") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    ({item.marketType})
-                  </span>
-                </>
-              ) : item.expiryType === "Monthly" &&
-                (item.marketType === "MCX" ||
-                  item.marketType === "BFO" ||
-                  item.marketType === "NFO") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    {item.buyPrice}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    ({item.marketType})
-                  </span>
-                </>
-              ) : null}
-            </div>
-          )}
-        </div>
-        {/* <br /> after each line to ensure new line */}
-        <br />
-      </div>
-    ))}
-</div>
-
+                    {/* Labels for negative P&L */}
+                    {(item.action === "SELL" ? item.profitClose : item.profit) <
+                      0 && (
+                      <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
+                        {item.expiryType === "Weekly" &&
+                        (item.marketType === "MCX" ||
+                          item.marketType === "BFO" ||
+                          item.marketType === "NFO") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              {item.date}
+                              <sup className="text-xms text-customGray">
+                                {item.thRdNd}
+                              </sup>
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              {item.buyPrice}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              ({item.orderType})
+                            </span>
+                          </>
+                        ) : item.marketType === "NSE" &&
+                          (item.expiryType === "Weekly" || "Monthly") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              ({item.marketType})
+                            </span>
+                          </>
+                        ) : item.expiryType === "Monthly" &&
+                          (item.marketType === "MCX" ||
+                            item.marketType === "BFO" ||
+                            item.marketType === "NFO") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              {item.buyPrice}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              ({item.marketType})
+                            </span>
+                          </>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+                  {/* <br /> after each line to ensure new line */}
+                  <br />
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>
