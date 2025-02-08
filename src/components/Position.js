@@ -7,6 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ConfirmationModal from "../modal/ConfirmationModal";
+import sortBy from 'lodash/sortBy';
 // import useTradeFormData from "../custom/useTradeFormData";
 // import TradeForm from "./TradeForm";
 import tele1 from "../assets/tele1.jpg";
@@ -321,29 +322,16 @@ const Position = () => {
 
     return () => clearInterval(interval); // Cleanup on component unmount
   }, []); // Removed `submittedData` dependency to prevent infinite loops
-
+  
   const sortedData = useMemo(() => {
-    // Create a copy of the submittedData array with their original indices
-    const dataWithIndices = submittedData.map((item, index) => ({ ...item, index }));
+    if (!submittedData || submittedData.length === 0) return [];
   
-    // Sort the data based on the position and the original index
-    return dataWithIndices.sort((a, b) => {
-      const order = { OPEN: 1, CLOSE: 2 };
-      const positionOrder = (order[a.position] || 2) - (order[b.position] || 2);
-  
-      // If positions are the same, sort by the original index to maintain stability
-      if (positionOrder === 0) {
-        return a.index - b.index;
-      }
-  
-      return positionOrder;
-    }).map(item => {
-      // Remove the index property before returning the sorted data
-      const { index, ...rest } = item;
-      return rest;
-    });
+    // Sort by position, then by original index
+    return sortBy(submittedData, [
+      (item) => (item.position === "OPEN" ? 1 : 2),
+      (item) => item.index,
+    ]);
   }, [submittedData]);
-  
 
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
