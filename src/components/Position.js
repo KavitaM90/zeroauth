@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { CgShapeCircle } from "react-icons/cg";
@@ -7,7 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ConfirmationModal from "../modal/ConfirmationModal";
-import sortBy from 'lodash/sortBy';
+//import sortBy from 'lodash/sortBy';
 // import useTradeFormData from "../custom/useTradeFormData";
 // import TradeForm from "./TradeForm";
 import tele1 from "../assets/tele1.jpg";
@@ -193,9 +193,10 @@ const Position = () => {
     const newData = {
       ...formData,
       id: Date.now(), // Unique ID for each position
+      originalIndex: submittedData.length,
       ltp: parseFloat(formData.minLTP) || 0, // Ensure valid number
     };
-
+    console.log( "originalIndex","submittedData.length")
     console.log("Submitted Data:", newData);
 
     // Update the submittedData state
@@ -323,15 +324,15 @@ const Position = () => {
     return () => clearInterval(interval); // Cleanup on component unmount
   }, []); // Removed `submittedData` dependency to prevent infinite loops
   
-  const sortedData = useMemo(() => {
-    if (!submittedData || submittedData.length === 0) return [];
+  // const sortedData = useMemo(() => {
+  //   if (!submittedData || submittedData.length === 0) return [];
   
-    // Sort by position, then by original index
-    return sortBy(submittedData, [
-      (item) => (item.position === "OPEN" ? 1 : 2),
-      (item) => item.index,
-    ]);
-  }, [submittedData]);
+  //   return sortBy(submittedData, [
+  //     (item) => (item.position === "OPEN" ? 1 : 2), // "OPEN" first, then "CLOSE"
+  //     (item) => item.originalIndex, // Maintain order of addition
+  //   ]);
+  // }, [submittedData]);
+  
 
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
@@ -1014,10 +1015,10 @@ const Position = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedData.map((row) =>(
+                  {submittedData.map((row) =>(
                    
                     <tr
-                      key={row.id || row.index} // Use unique id
+                      key={row.id || row.originalIndex} // Use unique id
                       onClick={() => handleRowClick(row.id)} // Pass id instead of index
                       // className={`border-t shadow-sm shadow-gray-100 ${
                       //   row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
@@ -1686,7 +1687,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedData.map((row, index) => (
+                  {submittedData.map((row) => (
                     <tr
                       key={row.id}
                       onClick={() => handleRowClick(row.id)}
