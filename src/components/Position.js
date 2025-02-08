@@ -324,11 +324,12 @@ const Position = () => {
 
   const sortedData = useMemo(() => {
     return [...submittedData].sort((a, b) => {
-      const order = { OPEN: 1, CLOSE: 2, OTHER: 3 };
-      return (order[a.position] || 3) - (order[b.position] || 3);
+      const order = { OPEN: 1, CLOSE: 2 };
+      return (order[a.position] || 2) - (order[b.position] || 2);
     });
-  }, [submittedData]);
-  console.log(sortedData);
+  }, [submittedData]);  // Forces update on deep changes
+  
+
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
       {/* Flex container for both tables */}
@@ -1010,9 +1011,10 @@ const Position = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedData.map((row) => (
+                  {sortedData.map((row) =>(
+                   
                     <tr
-                      key={row.id} // Use unique id
+                      key={row.id || row.index} // Use unique id
                       onClick={() => handleRowClick(row.id)} // Pass id instead of index
                       // className={`border-t shadow-sm shadow-gray-100 ${
                       //   row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
