@@ -1,5 +1,5 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, {useMemo} from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { CgShapeCircle } from "react-icons/cg";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -7,7 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ConfirmationModal from "../modal/ConfirmationModal";
-//import sortBy from 'lodash/sortBy';
+import sortBy from 'lodash/sortBy';
 // import useTradeFormData from "../custom/useTradeFormData";
 // import TradeForm from "./TradeForm";
 import tele1 from "../assets/tele1.jpg";
@@ -233,105 +233,105 @@ const Position = () => {
     setShowForm(false);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSubmittedData((prevData) => {
-        const updatedData = prevData.map((position) => {
-          const {
-            minLTP,
-            maxLTP,
-            quantity,
-            prevClose,
-            averagePrice,
-            action,
-            sellPrice,
-          } = position;
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setSubmittedData((prevData) => {
+  //       const updatedData = prevData.map((position) => {
+  //         const {
+  //           minLTP,
+  //           maxLTP,
+  //           quantity,
+  //           prevClose,
+  //           averagePrice,
+  //           action,
+  //           sellPrice,
+  //         } = position;
 
-          const min = parseFloat(minLTP);
-          const max = parseFloat(maxLTP);
-          const qty = parseInt(quantity, 10) || 0;
-          const avgPrice = parseFloat(averagePrice) || 0;
-          const sellPrc = parseFloat(sellPrice) || 0;
+  //         const min = parseFloat(minLTP);
+  //         const max = parseFloat(maxLTP);
+  //         const qty = parseInt(quantity, 10) || 0;
+  //         const avgPrice = parseFloat(averagePrice) || 0;
+  //         const sellPrc = parseFloat(sellPrice) || 0;
 
-          if (!isNaN(min) && !isNaN(max) && max > min) {
-            const steps = (max - min) / 0.05;
-            const randomStep = Math.floor(Math.random() * steps);
-            const newLTP = min + randomStep * 0.05;
+  //         if (!isNaN(min) && !isNaN(max) && max > min) {
+  //           const steps = (max - min) / 0.05;
+  //           const randomStep = Math.floor(Math.random() * steps);
+  //           const newLTP = min + randomStep * 0.05;
 
-            // Profit calculation functions
-            const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
-              if (action === "BUY") {
-                return (newLTP - avgPrice) * qty;
-              } else if (action === "SELL") {
-                return (avgPrice - newLTP) * qty;
-              }
-              return 0;
-            };
+  //           // Profit calculation functions
+  //           const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
+  //             if (action === "BUY") {
+  //               return (newLTP - avgPrice) * qty;
+  //             } else if (action === "SELL") {
+  //               return (avgPrice - newLTP) * qty;
+  //             }
+  //             return 0;
+  //           };
 
-            const profit = calculateProfit({ action, newLTP, avgPrice, qty });
+  //           const profit = calculateProfit({ action, newLTP, avgPrice, qty });
 
-            const calculateCloseProfit = ({
-              action,
-              avgPrice,
-              sellPrc,
-              qty,
-            }) => {
-              if (action === "BUY") {
-                return (sellPrc - avgPrice) * qty;
-              } else if (action === "SELL") {
-                return (avgPrice - sellPrc) * qty;
-              }
-              return 0;
-            };
+  //           const calculateCloseProfit = ({
+  //             action,
+  //             avgPrice,
+  //             sellPrc,
+  //             qty,
+  //           }) => {
+  //             if (action === "BUY") {
+  //               return (sellPrc - avgPrice) * qty;
+  //             } else if (action === "SELL") {
+  //               return (avgPrice - sellPrc) * qty;
+  //             }
+  //             return 0;
+  //           };
 
-            const profitClose = calculateCloseProfit({
-              action,
-              avgPrice,
-              sellPrc,
-              qty,
-            });
-            console.log("Profit for CLOSE position:", profitClose);
+  //           const profitClose = calculateCloseProfit({
+  //             action,
+  //             avgPrice,
+  //             sellPrc,
+  //             qty,
+  //           });
+  //           console.log("Profit for CLOSE position:", profitClose);
 
-            const totalCurrentAmount = newLTP * qty;
-            const percentageChange = prevClose
-              ? ((newLTP - prevClose) / prevClose) * 100
-              : 0;
+  //           const totalCurrentAmount = newLTP * qty;
+  //           const percentageChange = prevClose
+  //             ? ((newLTP - prevClose) / prevClose) * 100
+  //             : 0;
 
-            return {
-              ...position,
-              ltp: parseFloat(newLTP.toFixed(2)),
-              totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
-              profit: parseFloat(profit.toFixed(2)),
-              profitClose: parseFloat(profitClose.toFixed(2)),
-              percentageChange: parseFloat(percentageChange.toFixed(2)),
-            };
-          }
-          return position; // Return unchanged if invalid min/max
-        });
+  //           return {
+  //             ...position,
+  //             ltp: parseFloat(newLTP.toFixed(2)),
+  //             totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
+  //             profit: parseFloat(profit.toFixed(2)),
+  //             profitClose: parseFloat(profitClose.toFixed(2)),
+  //             percentageChange: parseFloat(percentageChange.toFixed(2)),
+  //           };
+  //         }
+  //         return position; // Return unchanged if invalid min/max
+  //       });
 
-        // Calculate total profit
-        const totalProfit = updatedData.reduce(
-          (acc, entry) => acc + (entry.profit || 0),
-          0
-        );
-        setTotalProfit(totalProfit);
-        console.log("Total Profit:", totalProfit);
+  //       // Calculate total profit
+  //       const totalProfit = updatedData.reduce(
+  //         (acc, entry) => acc + (entry.profit || 0),
+  //         0
+  //       );
+  //       setTotalProfit(totalProfit);
+  //       console.log("Total Profit:", totalProfit);
 
-        return updatedData;
-      });
-    }, 1000);
+  //       return updatedData;
+  //     });
+  //   }, 1000);
 
-    return () => clearInterval(interval); // Cleanup on component unmount
-  }, []); // Removed `submittedData` dependency to prevent infinite loops
+  //   return () => clearInterval(interval); // Cleanup on component unmount
+  // }, []); // Removed `submittedData` dependency to prevent infinite loops
   
-  // const sortedData = useMemo(() => {
-  //   if (!submittedData || submittedData.length === 0) return [];
+  const sortedData = useMemo(() => {
+    if (!submittedData || submittedData.length === 0) return [];
   
-  //   return sortBy(submittedData, [
-  //     (item) => (item.position === "OPEN" ? 1 : 2), // "OPEN" first, then "CLOSE"
-  //     (item) => item.originalIndex, // Maintain order of addition
-  //   ]);
-  // }, [submittedData]);
+    return sortBy(submittedData, [
+      (item) => (item.position === "OPEN" ? 1 : 2), // "OPEN" first, then "CLOSE"
+      (item) => item.originalIndex, // Maintain order of addition
+    ]);
+  }, [submittedData]);
   
 
   return (
@@ -1015,7 +1015,7 @@ const Position = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {submittedData.map((row) =>(
+                  {sortedData.map((row) =>(
                    
                     <tr
                       key={row.id || row.originalIndex} // Use unique id
@@ -1687,7 +1687,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                   </tr>
                 </thead>
                 <tbody>
-                  {submittedData.map((row) => (
+                  {sortedData.map((row) => (
                     <tr
                       key={row.id}
                       onClick={() => handleRowClick(row.id)}
