@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { CgShapeCircle } from "react-icons/cg";
