@@ -150,7 +150,7 @@ const Position = () => {
     }
   };
   const [showForm, setShowForm] = useState(false);
-  const [totalProfit, setTotalProfit] = useState(0);
+  //const [totalProfit, setTotalProfit] = useState(0);
   const [formData, setFormData] = useState({
     position: "OPEN",
     action: "BUY",
@@ -1346,7 +1346,7 @@ const Position = () => {
                     <td className="p-4"></td>
                     <td className="p-4 text-end">Total P&L</td>
 
-                    <td
+                    {/* <td
                       className={`p-4 text-sm font-normal text-end text-wrap truncate
 ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     >
@@ -1359,7 +1359,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
-                    </td>
+                    </td> */}
                   </tr>
                 </tfoot>
               </table>
@@ -2011,7 +2011,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                   <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
                     <td colSpan="4" className="p-4"></td>
                     <td className="p-4 text-end">Total P&L</td>
-                    <td
+                    {/* <td
                       className={`p-4 text-sm font-normal text-end text-wrap truncate
   ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     >
@@ -2024,7 +2024,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
-                    </td>
+                    </td> */}
                     <td className="p-4"></td>
                   </tr>
                 </tfoot>
