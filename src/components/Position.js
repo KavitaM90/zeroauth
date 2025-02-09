@@ -23,6 +23,7 @@ const Position = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const { marketData, setMarketData } = useMarketData();
   const [showFormm, setShowFormm] = useState(false);
+  const realTimeDataRef = useRef({});
 
   const onFormSubmit = (event) => {
     event.preventDefault(); // Prevent page reload
@@ -150,7 +151,7 @@ const Position = () => {
     }
   };
   const [showForm, setShowForm] = useState(false);
-  //const [totalProfit, setTotalProfit] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
   const [formData, setFormData] = useState({
     position: "OPEN",
     action: "BUY",
@@ -232,6 +233,97 @@ const Position = () => {
 
     setShowForm(false);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const updatedRealTimeData = { ...realTimeDataRef.current };
+  
+      submittedData.forEach((position) => {
+        const {
+          minLTP,
+          maxLTP,
+          quantity,
+          prevClose,
+          averagePrice,
+          action,
+          sellPrice,
+          id,
+        } = position;
+  
+        const min = parseFloat(minLTP);
+        const max = parseFloat(maxLTP);
+        const qty = parseInt(quantity, 10) || 0;
+        const avgPrice = parseFloat(averagePrice) || 0;
+        const sellPrc = parseFloat(sellPrice) || 0;
+  
+        if (!isNaN(min) && !isNaN(max) && max > min) {
+          const steps = (max - min) / 0.05;
+          const randomStep = Math.floor(Math.random() * steps);
+          const newLTP = min + randomStep * 0.05;
+  
+          // Profit calculation functions
+          const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
+            if (action === "BUY") {
+              return (newLTP - avgPrice) * qty;
+            } else if (action === "SELL") {
+              return (avgPrice - newLTP) * qty;
+            }
+            return 0;
+          };
+  
+          const profit = calculateProfit({ action, newLTP, avgPrice, qty });
+  
+          const calculateCloseProfit = ({
+            action,
+            avgPrice,
+            sellPrc,
+            qty,
+          }) => {
+            if (action === "BUY") {
+              return (sellPrc - avgPrice) * qty;
+            } else if (action === "SELL") {
+              return (avgPrice - sellPrc) * qty;
+            }
+            return 0;
+          };
+  
+          const profitClose = calculateCloseProfit({
+            action,
+            avgPrice,
+            sellPrc,
+            qty,
+          });
+  
+          const totalCurrentAmount = newLTP * qty;
+          const percentageChange = prevClose
+            ? ((newLTP - prevClose) / prevClose) * 100
+            : 0;
+  
+          updatedRealTimeData[id] = {
+            ltp: parseFloat(newLTP.toFixed(2)),
+            totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
+            profit: parseFloat(profit.toFixed(2)),
+            profitClose: parseFloat(profitClose.toFixed(2)),
+            percentageChange: parseFloat(percentageChange.toFixed(2)),
+          };
+        }
+      });
+  
+      // ✅ Calculate total profit
+      const totalProfit = Object.values(updatedRealTimeData).reduce(
+        (acc, entry) => acc + (entry.profit || 0),
+        0
+      );
+  
+      setTotalProfit(totalProfit);
+      console.log("Total Profit:", totalProfit);
+  
+      realTimeDataRef.current = updatedRealTimeData;
+    }, 1000);
+  
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, [submittedData]);
+  
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
