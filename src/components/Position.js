@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState,useRef } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { CgShapeCircle } from "react-icons/cg";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -1438,7 +1438,7 @@ const Position = () => {
                     <td className="p-4"></td>
                     <td className="p-4 text-end">Total P&L</td>
 
-                    {/* <td
+                    <td
                       className={`p-4 text-sm font-normal text-end text-wrap truncate
 ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     >
@@ -1451,7 +1451,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
-                    </td> */}
+                    </td>
                   </tr>
                 </tfoot>
               </table>
@@ -2103,7 +2103,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                   <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
                     <td colSpan="4" className="p-4"></td>
                     <td className="p-4 text-end">Total P&L</td>
-                    {/* <td
+                    <td
                       className={`p-4 text-sm font-normal text-end text-wrap truncate
   ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     >
@@ -2116,7 +2116,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
-                    </td> */}
+                    </td>
                     <td className="p-4"></td>
                   </tr>
                 </tfoot>
