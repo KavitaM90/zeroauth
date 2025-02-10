@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useMemo, useState,useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { CgShapeCircle } from "react-icons/cg";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -7,7 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ConfirmationModal from "../modal/ConfirmationModal";
-import sortBy from 'lodash/sortBy';
+import sortBy from "lodash/sortBy";
 // import useTradeFormData from "../custom/useTradeFormData";
 // import TradeForm from "./TradeForm";
 import tele1 from "../assets/tele1.jpg";
@@ -23,6 +23,8 @@ const Position = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const { marketData, setMarketData } = useMarketData();
   const [showFormm, setShowFormm] = useState(false);
+  const [realTimeData, setRealTimeData] = useState({});
+  const [totalProfit, setTotalProfit] = useState(0);
   //const realTimeDataRef = useRef({});
 
   const onFormSubmit = (event) => {
@@ -151,9 +153,7 @@ const Position = () => {
     }
   };
   const [showForm, setShowForm] = useState(false);
-  const [realTimeData, setRealTimeData] = useState({});
-  const [totalProfit, setTotalProfit] = useState(0);
-//  const [totalProfit, setTotalProfit] = useState(0);
+  //  const [totalProfit, setTotalProfit] = useState(0);
   const [formData, setFormData] = useState({
     position: "OPEN",
     action: "BUY",
@@ -199,7 +199,7 @@ const Position = () => {
       originalIndex: submittedData.length,
       ltp: parseFloat(formData.minLTP) || 0, // Ensure valid number
     };
-    console.log( "originalIndex","submittedData.length")
+    console.log("originalIndex", "submittedData.length");
     console.log("Submitted Data:", newData);
 
     // Update the submittedData state
@@ -235,102 +235,131 @@ const Position = () => {
 
     setShowForm(false);
   };
- 
+  console.log("Submitted Data Before Sorting:", submittedData);
+
+  // Use useMemo to sort submittedData
+  const sortedData = useMemo(() => {
+    if (!submittedData || submittedData.length === 0) return [];
+
+    return sortBy(submittedData, [
+      (item) => (item.position === "OPEN" ? 1 : 2), // "OPEN" first, then "CLOSE"
+      (item) => item.originalIndex, // Maintain order of addition
+    ]);
+  }, [submittedData]);
+  console.log("Sorted Data:", sortedData);
   useEffect(() => {
     const interval = setInterval(() => {
-      const updatedRealTimeData = { ...realTimeData };
+      setRealTimeData((prevRealTimeData) => {
+        const updatedRealTimeData = { ...prevRealTimeData };
 
-      submittedData.forEach((position) => {
-        const {
-          minLTP,
-          maxLTP,
-          quantity,
-          prevClose,
-          averagePrice,
-          action,
-          sellPrice,
-          id,
-        } = position;
-
-        const min = parseFloat(minLTP);
-        const max = parseFloat(maxLTP);
-        const qty = parseInt(quantity, 10) || 0;
-        const avgPrice = parseFloat(averagePrice) || 0;
-        const sellPrc = parseFloat(sellPrice) || 0;
-
-        if (!isNaN(min) && !isNaN(max) && max > min) {
-          const steps = (max - min) / 0.05;
-          const randomStep = Math.floor(Math.random() * steps);
-          const newLTP = min + randomStep * 0.05;
-
-          // Profit calculation functions
-          const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
-            if (action === "BUY") {
-              return (newLTP - avgPrice) * qty;
-            } else if (action === "SELL") {
-              return (avgPrice - newLTP) * qty;
-            }
-            return 0;
-          };
-
-          const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-
-          const calculateCloseProfit = ({
+        sortedData.forEach((position) => {
+          const {
+            minLTP,
+            maxLTP,
+            quantity,
+            prevClose,
+            averagePrice,
             action,
-            avgPrice,
-            sellPrc,
-            qty,
-          }) => {
-            if (action === "BUY") {
-              return (sellPrc - avgPrice) * qty;
-            } else if (action === "SELL") {
-              return (avgPrice - sellPrc) * qty;
-            }
-            return 0;
-          };
+            sellPrice,
+            id,
+            orderType,
+            marketType,
+            holdingStatus,
+            expiryType,
+            stockName,
+            buyPrice,
+          } = position;
 
-          const profitClose = calculateCloseProfit({
-            action,
-            avgPrice,
-            sellPrc,
-            qty,
-          });
+          console.log("Processing position:", position); // ✅ Debugging
 
-          const totalCurrentAmount = newLTP * qty;
-          const percentageChange = prevClose
-            ? ((newLTP - prevClose) / prevClose) * 100
-            : 0;
+          const min = parseFloat(minLTP);
+          const max = parseFloat(maxLTP);
+          const qty = parseInt(quantity, 10) || 0;
+          const avgPrice = parseFloat(averagePrice) || 0;
+          const sellPrc = parseFloat(sellPrice) || 0;
 
-          updatedRealTimeData[id] = {
-            ltp: parseFloat(newLTP.toFixed(2)),
-            totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
-            profit: parseFloat(profit.toFixed(2)),
-            profitClose: parseFloat(profitClose.toFixed(2)),
-            percentageChange: parseFloat(percentageChange.toFixed(2)),
-          };
-        }
+          if (!isNaN(min) && !isNaN(max) && max > min) {
+            const steps = (max - min) / 0.05;
+            const randomStep = Math.floor(Math.random() * steps);
+            const newLTP = min + randomStep * 0.05;
+
+            // ✅ Profit Calculation
+            const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
+              if (action === "BUY") return (newLTP - avgPrice) * qty;
+              if (action === "SELL") return (avgPrice - newLTP) * qty;
+              return 0;
+            };
+
+            const profit = calculateProfit({ action, newLTP, avgPrice, qty });
+
+            const calculateCloseProfit = ({
+              action,
+              avgPrice,
+              sellPrc,
+              qty,
+            }) => {
+              if (action === "BUY") return (sellPrc - avgPrice) * qty;
+              if (action === "SELL") return (avgPrice - sellPrc) * qty;
+              return 0;
+            };
+
+            const profitClose = calculateCloseProfit({
+              action,
+              avgPrice,
+              sellPrc,
+              qty,
+            });
+
+            const totalCurrentAmount = newLTP * qty;
+            const percentageChange = prevClose
+              ? ((newLTP - prevClose) / prevClose) * 100
+              : 0;
+
+            updatedRealTimeData[id] = {
+              ltp: parseFloat(newLTP.toFixed(2)),
+              totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
+              profit: parseFloat(profit.toFixed(2)),
+              profitClose: parseFloat(profitClose.toFixed(2)),
+              percentageChange: parseFloat(percentageChange.toFixed(2)),
+              quantity: qty, // ✅ Ensure quantity is included
+              averagePrice: avgPrice, // ✅ Ensure averagePrice is included
+              sellPrice: sellPrc, // ✅ Ensure sellPrice is included
+              action, // ✅ Ensure action is included
+              orderType,
+              marketType,
+              holdingStatus,
+              expiryType,
+              stockName,
+              buyPrice,
+            };
+          }
+        });
+
+        // ✅ Calculate total profit
+        const totalProfit = Object.values(updatedRealTimeData).reduce(
+          (acc, entry) => acc + (entry.profit || 0),
+          0
+        );
+
+        setTotalProfit(totalProfit);
+        console.log("Updated Real-Time Data:", updatedRealTimeData); // ✅ Debugging
+        console.log("Total Profit:", totalProfit);
+
+        return updatedRealTimeData;
       });
-
-      // ✅ Calculate total profit
-      const totalProfit = Object.values(updatedRealTimeData).reduce(
-        (acc, entry) => acc + (entry.profit || 0),
-        0
-      );
-
-      setTotalProfit(totalProfit);
-      console.log("Total Profit:", totalProfit);
-
-      setRealTimeData(updatedRealTimeData);
     }, 1000);
 
     return () => clearInterval(interval); // Cleanup on component unmount
-  }, [submittedData]);
-
-
+  }, [sortedData]); // ✅ Depend on sortedData instead of submittedData
+  const mergedData = sortedData.map((item) => ({
+    ...item,
+    ...(realTimeData[item.id] || {}), // Merge real-time values
+  }));
+  
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     const updatedRealTimeData = { ...realTimeDataRef.current };
-  
+
   //     submittedData.forEach((position) => {
   //       const {
   //         minLTP,
@@ -342,18 +371,18 @@ const Position = () => {
   //         sellPrice,
   //         id,
   //       } = position;
-  
+
   //       const min = parseFloat(minLTP);
   //       const max = parseFloat(maxLTP);
   //       const qty = parseInt(quantity, 10) || 0;
   //       const avgPrice = parseFloat(averagePrice) || 0;
   //       const sellPrc = parseFloat(sellPrice) || 0;
-  
+
   //       if (!isNaN(min) && !isNaN(max) && max > min) {
   //         const steps = (max - min) / 0.05;
   //         const randomStep = Math.floor(Math.random() * steps);
   //         const newLTP = min + randomStep * 0.05;
-  
+
   //         // Profit calculation functions
   //         const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
   //           if (action === "BUY") {
@@ -363,9 +392,9 @@ const Position = () => {
   //           }
   //           return 0;
   //         };
-  
+
   //         const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-  
+
   //         const calculateCloseProfit = ({
   //           action,
   //           avgPrice,
@@ -379,19 +408,19 @@ const Position = () => {
   //           }
   //           return 0;
   //         };
-  
+
   //         const profitClose = calculateCloseProfit({
   //           action,
   //           avgPrice,
   //           sellPrc,
   //           qty,
   //         });
-  
+
   //         const totalCurrentAmount = newLTP * qty;
   //         const percentageChange = prevClose
   //           ? ((newLTP - prevClose) / prevClose) * 100
   //           : 0;
-  
+
   //         updatedRealTimeData[id] = {
   //           ltp: parseFloat(newLTP.toFixed(2)),
   //           totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
@@ -401,22 +430,21 @@ const Position = () => {
   //         };
   //       }
   //     });
-  
+
   //     // ✅ Calculate total profit
   //     const totalProfit = Object.values(updatedRealTimeData).reduce(
   //       (acc, entry) => acc + (entry.profit || 0),
   //       0
   //     );
-  
+
   //     setTotalProfit(totalProfit);
   //     console.log("Total Profit:", totalProfit);
-  
+
   //     realTimeDataRef.current = updatedRealTimeData;
   //   }, 1000);
-  
+
   //   return () => clearInterval(interval); // Cleanup on component unmount
   // }, [submittedData]);
-  
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -508,16 +536,6 @@ const Position = () => {
 
   //   return () => clearInterval(interval); // Cleanup on component unmount
   // }, []); // Removed `submittedData` dependency to prevent infinite loops
-  
-  const sortedData = useMemo(() => {
-    if (!submittedData || submittedData.length === 0) return [];
-  
-    return sortBy(submittedData, [
-      (item) => (item.position === "OPEN" ? 1 : 2), // "OPEN" first, then "CLOSE"
-      (item) => item.originalIndex, // Maintain order of addition
-    ]);
-  }, [submittedData]);
-  
 
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
@@ -1200,8 +1218,7 @@ const Position = () => {
                   </tr>
                 </thead>
                 <tbody>
-                {Object.entries(realTimeData).map(([id, row])  =>(
-                   
+                  {mergedData.map((row) => (
                     <tr
                       key={row.id || row.originalIndex} // Use unique id
                       onClick={() => handleRowClick(row.id)} // Pass id instead of index
@@ -1872,7 +1889,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                   </tr>
                 </thead>
                 <tbody>
-                {Object.entries(realTimeData).map(([id, row]) => (
+                  {mergedData.map((row) => (
                     <tr
                       key={row.id}
                       onClick={() => handleRowClick(row.id)}
@@ -2231,7 +2248,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
               Breakdown
             </span>
 
-            {submittedData
+            {mergedData
               .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
               .map((item, index) => (
                 <div key={index}>
