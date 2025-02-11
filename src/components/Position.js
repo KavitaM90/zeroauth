@@ -2287,29 +2287,29 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                           item.marketType === "BFO" ||
                           item.marketType === "NFO") ? (
                           <>
-                            <span className="text-customGray text-xs font-normal">
+                            <span className="text-customGray text-xs font-normal uppercase">
                               {item.stockName}
                             </span>
-                            <span className="text-customGray text-xs font-normal ml-1">
+                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
                               {item.date}
-                              <sup className="text-xms text-customGray">
+                              <sup className="text-xms text-customGray uppercase">
                                 {item.thRdNd}
                               </sup>
                             </span>
-                            <span className="text-customGray text-xs font-normal ml-1">
+                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
                               {item.buyPrice}
                             </span>
-                            <span className="text-customGray text-xs font-normal ml-1">
+                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
                               ({item.orderType})
                             </span>
                           </>
                         ) : item.marketType === "NSE" &&
                           (item.expiryType === "Weekly" || "Monthly") ? (
                           <>
-                            <span className="text-customGray text-xs font-normal">
+                            <span className="text-customGray text-xs font-normal uppercase">
                               {item.stockName}
                             </span>
-                            <span className="text-customGray text-xs font-normal ml-1">
+                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
                               ({item.marketType})
                             </span>
                           </>
@@ -2318,13 +2318,13 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             item.marketType === "BFO" ||
                             item.marketType === "NFO") ? (
                           <>
-                            <span className="text-customGray text-xs font-normal">
+                            <span className="text-customGray text-xs font-normal uppercase">
                               {item.stockName}
                             </span>
-                            <span className="text-customGray text-xs font-normal ml-1">
+                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
                               {item.buyPrice}
                             </span>
-                            <span className="text-customGray text-xs font-normal ml-1">
+                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
                               ({item.marketType})
                             </span>
                           </>
@@ -2341,29 +2341,29 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                           item.marketType === "BFO" ||
                           item.marketType === "NFO") ? (
                           <>
-                            <span className="text-customGray text-xs font-normal">
+                            <span className="text-customGray text-xs font-normal uppercase">
                               {item.stockName}
                             </span>
-                            <span className="text-customGray text-xs font-normal mr-1">
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
                               {item.date}
-                              <sup className="text-xms text-customGray">
+                              <sup className="text-xms text-customGray uppercase">
                                 {item.thRdNd}
                               </sup>
                             </span>
-                            <span className="text-customGray text-xs font-normal mr-1">
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
                               {item.buyPrice}
                             </span>
-                            <span className="text-customGray text-xs font-normal mr-1">
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
                               ({item.orderType})
                             </span>
                           </>
                         ) : item.marketType === "NSE" &&
                           (item.expiryType === "Weekly" || "Monthly") ? (
                           <>
-                            <span className="text-customGray text-xs font-normal">
+                            <span className="text-customGray text-xs font-normal uppercase">
                               {item.stockName}
                             </span>
-                            <span className="text-customGray text-xs font-normal mr-1">
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
                               ({item.marketType})
                             </span>
                           </>
@@ -2372,13 +2372,13 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                             item.marketType === "BFO" ||
                             item.marketType === "NFO") ? (
                           <>
-                            <span className="text-customGray text-xs font-normal">
+                            <span className="text-customGray text-xs font-normal uppercase">
                               {item.stockName}
                             </span>
-                            <span className="text-customGray text-xs font-normal mr-1">
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
                               {item.buyPrice}
                             </span>
-                            <span className="text-customGray text-xs font-normal mr-1">
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
                               ({item.marketType})
                             </span>
                           </>

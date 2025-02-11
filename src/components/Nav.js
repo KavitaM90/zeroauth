@@ -1,8 +1,8 @@
 import React from "react";
 import { CiBellOn } from "react-icons/ci";
 import { Link, useLocation } from "react-router-dom";
-import { BiSolidTagAlt } from "react-icons/bi";
 import { useMarketData } from "../custom/useMarketData";
+import arrow from "../assets/arrow.jpg";
 
 const Nav = () => {
   const { marketData } = useMarketData();
@@ -16,71 +16,80 @@ const Nav = () => {
     <nav className="fixed top-0 left-0 w-full font-sans bg-bgWhite p-0 shadow-md z-50 flex items-center h-12 overflow-hidden ">
       {/* Left Section: NIFTY and SENSEX */}
       <div className="flex-[1_1_33.33%] flex items-center justify-between border-r border-borderGray px-2 h-full">
-  <div className="flex space-x-4 ">
-    {/* Nifty Section */}
-    <div className="text-customGray text-xm font-normal">
-      {marketData?.["nifty50"]
-        ? String(marketData["nifty50"]).toUpperCase()
-        : ""}
+        <div className="flex space-x-4 ">
+          {/* Nifty Section */}
+          <div className="text-customGray text-xm font-normal">
+            {marketData?.["nifty50"]
+              ? String(marketData["nifty50"]).toUpperCase()
+              : ""}
 
-      <span className="text-textGreen ml-1 text-xm font-normal">
-        {marketData?.["niftyLTP"] !== undefined && marketData["niftyLTP"] !== null
-          ? parseFloat(marketData["niftyLTP"]).toLocaleString("en-IN", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
-          : ""}
-      </span>
-      <span className="text-text2Gray ml-1 text-xs font-normal">
-        {marketData?.["niftyDiff"] !== undefined && marketData["niftyDiff"] !== null
-          ? parseFloat(marketData["niftyDiff"]).toLocaleString("en-IN", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
-          : ""}
-
-        {marketData?.["niftyPercentageChange"] !== undefined &&
-          marketData["niftyPercentageChange"] !== null && (
-            <span className="ml-[2px]">
-              ({parseFloat(marketData["niftyPercentageChange"]).toFixed(2)}%)
+            <span className="text-textGreen ml-1 text-xm font-normal">
+              {marketData?.["niftyLTP"] !== undefined &&
+              marketData["niftyLTP"] !== null
+                ? parseFloat(marketData["niftyLTP"]).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
             </span>
-          )}
-      </span>
-    </div>
+            <span className="text-text2Gray ml-1 text-xs font-normal">
+              {marketData?.["niftyDiff"] !== undefined &&
+              marketData["niftyDiff"] !== null
+                ? parseFloat(marketData["niftyDiff"]).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
 
-    {/* Sensex Section */}
-    <div className="text-customGray text-xm font-normal">
-      {marketData?.["sensex"]
-        ? String(marketData["sensex"]).toUpperCase()
-        : ""}
-
-      <span className="text-textGreen ml-1 text-xm font-normal">
-        {marketData?.["sensexLTP"] !== undefined && marketData["sensexLTP"] !== null
-          ? parseFloat(marketData["sensexLTP"]).toLocaleString("en-IN", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
-          : ""}
-      </span>
-      <span className="text-text2Gray ml-1 text-xs font-normal">
-        {marketData?.["sensexDiff"] !== undefined && marketData["sensexDiff"] !== null
-          ? parseFloat(marketData["sensexDiff"]).toLocaleString("en-IN", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
-          : ""}
-
-        {marketData?.["sensexPercentageChange"] !== undefined &&
-          marketData["sensexPercentageChange"] !== null && (
-            <span className="ml-[2px]">
-              ({parseFloat(marketData["sensexPercentageChange"]).toFixed(2)}%)
+              {marketData?.["niftyPercentageChange"] !== undefined &&
+                marketData["niftyPercentageChange"] !== null && (
+                  <span className="ml-[2px]">
+                    (
+                    {parseFloat(marketData["niftyPercentageChange"]).toFixed(2)}
+                    %)
+                  </span>
+                )}
             </span>
-          )}
-      </span>
-    </div>
-  </div>
-</div>
+          </div>
 
+          {/* Sensex Section */}
+          <div className="text-customGray text-xm font-normal">
+            {marketData?.["sensex"]
+              ? String(marketData["sensex"]).toUpperCase()
+              : ""}
+
+            <span className="text-textGreen ml-1 text-xm font-normal">
+              {marketData?.["sensexLTP"] !== undefined &&
+              marketData["sensexLTP"] !== null
+                ? parseFloat(marketData["sensexLTP"]).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
+            </span>
+            <span className="text-text2Gray ml-1 text-xs font-normal">
+              {marketData?.["sensexDiff"] !== undefined &&
+              marketData["sensexDiff"] !== null
+                ? parseFloat(marketData["sensexDiff"]).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
+
+              {marketData?.["sensexPercentageChange"] !== undefined &&
+                marketData["sensexPercentageChange"] !== null && (
+                  <span className="ml-[2px]">
+                    (
+                    {parseFloat(marketData["sensexPercentageChange"]).toFixed(
+                      2
+                    )}
+                    %)
+                  </span>
+                )}
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Hamburger Button for Mobile */}
       <div className="sm:hidden flex items-center px-4">
@@ -112,7 +121,10 @@ const Nav = () => {
       <div className="hidden sm:flex flex-[2_1_66.66%] items-center justify-between px-4 h-full">
         {/* Left: Icon */}
         <div className="flex items-center">
-          <BiSolidTagAlt className="w-6 h-6 text-iconRed transform scale-x-[-1]" />
+          <img alt="icon"
+            src={arrow}
+            className="w-5.5 h-3.5 text-iconRed transform rotate-360"
+          />
         </div>
 
         {/* Right: Links and User Info */}
@@ -129,7 +141,7 @@ const Nav = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`font-sans ${
+                className={`font-sans  font-normal text-sm  ${
                   currentPath === link.to ? "text-navActive" : "text-customGray"
                 }`}
               >
@@ -165,7 +177,7 @@ const Nav = () => {
           <Link
             key={link.to}
             to={link.to}
-            className={`block px-4 py-2 font-sans ${
+            className={`block px-4 py-2 font-sans font-normal text-sm ${
               currentPath === link.to ? "text-navActive" : "text-customGray"
             }`}
           >
