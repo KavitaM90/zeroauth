@@ -93,13 +93,20 @@ const Position = () => {
   // Confirm deletion of a row
   const confirmDeleteRow = () => {
     if (selectedRowId !== null) {
-      const updatedData = submittedData.filter(
-        (row) => row.id !== selectedRowId
-      );
+      console.log("Deleting Row with ID:", selectedRowId);
+      const updatedData = submittedData.filter((row) => row.id !== selectedRowId);
       setSubmittedData(updatedData);
+  
+      setRealTimeData((prev) => {
+        const newData = { ...prev };
+        delete newData[selectedRowId];
+        console.log("Updated Real-Time Data after Deletion:", newData);
+        return newData;
+      });
     }
-    closeModal(); // Close modal after deletion
+    closeModal();
   };
+  
 
   // Handle Select All functionality
   const handleSelectAll = (e) => {
@@ -135,6 +142,14 @@ const Position = () => {
   useEffect(() => {
     console.log("Data state updated:", data);
   }, [data]);
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("submittedData")) || [];
+    const validatedData = storedData.map((item) => ({
+      ...item,
+      id: item.id || Date.now(), // Assign a new ID if missing
+    }));
+    setSubmittedData(validatedData);
+  }, []);
 
   // Sample data (you can replace this with actual data)
   const stockData = [
@@ -158,7 +173,6 @@ const Position = () => {
     position: "OPEN",
     action: "BUY",
     orderType: "MIS",
-    holdingStatus: "",
     marketType: "NSE",
     expiryType: "Monthly",
     stockName: "",
@@ -251,111 +265,107 @@ const Position = () => {
     const interval = setInterval(() => {
       setRealTimeData((prevRealTimeData) => {
         const updatedRealTimeData = { ...prevRealTimeData };
-
-        sortedData.forEach((position) => {
-          const {
-            minLTP,
-            maxLTP,
-            quantity,
-            prevClose,
-            averagePrice,
-            action,
-            sellPrice,
-            id,
-            orderType,
-            marketType,
-            holdingStatus,
-            expiryType,
-            stockName,
-            buyPrice,
-          } = position;
-
-          console.log("Processing position:", position); // ✅ Debugging
-
+  
+        sortedData.forEach((positionn) => {
+          const { id, minLTP, maxLTP, quantity, prevClose, averagePrice, action, sellPrice, position } = positionn;
+          if (!id) {
+            console.warn(`⚠️ Position missing ID:`, positionn);
+            return; // Skip entries without IDs
+          }
+  
           const min = parseFloat(minLTP);
           const max = parseFloat(maxLTP);
           const qty = parseInt(quantity, 10) || 0;
           const avgPrice = parseFloat(averagePrice) || 0;
           const sellPrc = parseFloat(sellPrice) || 0;
-
+  
           if (!isNaN(min) && !isNaN(max) && max > min) {
             const steps = (max - min) / 0.05;
             const randomStep = Math.floor(Math.random() * steps);
             const newLTP = min + randomStep * 0.05;
-
-            // ✅ Profit Calculation
+  
+            // ✅ Profit Calculation for OPEN positions
             const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
               if (action === "BUY") return (newLTP - avgPrice) * qty;
               if (action === "SELL") return (avgPrice - newLTP) * qty;
               return 0;
             };
-
             const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-
-            const calculateCloseProfit = ({
-              action,
-              avgPrice,
-              sellPrc,
-              qty,
-            }) => {
-              if (action === "BUY") return (sellPrc - avgPrice) * qty;
-              if (action === "SELL") return (avgPrice - sellPrc) * qty;
-              return 0;
-            };
-
-            const profitClose = calculateCloseProfit({
-              action,
-              avgPrice,
-              sellPrc,
-              qty,
-            });
-
+  
+            // ✅ Ensure `profitClose` is set only ONCE for CLOSED positions
+            let profitClose = prevRealTimeData[id]?.profitClose;
+            if (position === "CLOSE" && profitClose === undefined) {
+              profitClose = (action === "BUY" ? (sellPrc - avgPrice) * qty : (avgPrice - sellPrc) * qty);
+            }
+  
             const totalCurrentAmount = newLTP * qty;
-            const percentageChange = prevClose
-              ? ((newLTP - prevClose) / prevClose) * 100
-              : 0;
-
+            const percentageChange = prevClose ? ((newLTP - prevClose) / prevClose) * 100 : 0;
+  
             updatedRealTimeData[id] = {
+              id: id, // Explicitly include the ID
               ltp: parseFloat(newLTP.toFixed(2)),
               totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
               profit: parseFloat(profit.toFixed(2)),
-              profitClose: parseFloat(profitClose.toFixed(2)),
+              profitClose: profitClose !== undefined ? parseFloat(profitClose.toFixed(2)) : 0,
               percentageChange: parseFloat(percentageChange.toFixed(2)),
-              quantity: qty, // ✅ Ensure quantity is included
-              averagePrice: avgPrice, // ✅ Ensure averagePrice is included
-              sellPrice: sellPrc, // ✅ Ensure sellPrice is included
-              action, // ✅ Ensure action is included
-              orderType,
-              marketType,
-              holdingStatus,
-              expiryType,
-              stockName,
-              buyPrice,
+              quantity: qty,
+              averagePrice: avgPrice,
+              sellPrice: sellPrc,
+              action,
+              position,
             };
           }
         });
-
-        // ✅ Calculate total profit
-        const totalProfit = Object.values(updatedRealTimeData).reduce(
-          (acc, entry) => acc + (entry.profit || 0),
-          0
-        );
-
+  
+        console.log("Sorted Data IDs:", sortedData.map(p => p.id));
+        console.log("Updated Real-Time Data IDs:", Object.values(updatedRealTimeData).map(e => e.id));
+  
+        // ✅ Calculate total profit correctly
+        const totalProfit = Object.values(updatedRealTimeData).reduce((acc, entry) => {
+          if (!entry.id) {
+            console.warn("Skipping entry with missing ID:", entry);
+            return acc; // Skip this entry
+          }
+  
+          const positionn = sortedData.find((p) => p.id === entry.id);
+  
+          if (!positionn) {
+            console.warn(`No position found for entryId: ${entry.id}`);
+          }
+  
+          console.log("Matched Position:", positionn);
+          console.log("Positionn Position:", positionn?.position);
+  
+          if (positionn?.position === "CLOSE") {
+            return acc + (entry.profitClose || 0);
+          } else {
+            return acc + (entry.profit || 0);
+          }
+        }, 0).toFixed(2);
+  
+        console.log("Final Total Profit:", totalProfit);
         setTotalProfit(totalProfit);
-        console.log("Updated Real-Time Data:", updatedRealTimeData); // ✅ Debugging
-        console.log("Total Profit:", totalProfit);
-
+        console.log("updatedRealTimeData", updatedRealTimeData);
         return updatedRealTimeData;
       });
     }, 1000);
-
-    return () => clearInterval(interval); // Cleanup on component unmount
-  }, [sortedData]); // ✅ Depend on sortedData instead of submittedData
-  const mergedData = sortedData.map((item) => ({
-    ...item,
-    ...(realTimeData[item.id] || {}), // Merge real-time values
-  }));
   
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, [sortedData]); // ✅ Depend only on sortedData
+  
+const mergedData = sortedData.map((item) => {
+  if (!item.id) {
+    console.warn("❌ Missing ID in sortedData:", item);
+  } else {
+    console.log("✅ ID found in sortedData:", item.id);
+  }
+
+  return {
+    ...item,
+    ...(realTimeData[item.id] || {}),
+  };
+});
+
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     const updatedRealTimeData = { ...realTimeDataRef.current };
