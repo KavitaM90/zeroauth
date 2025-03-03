@@ -94,9 +94,11 @@ const Position = () => {
   const confirmDeleteRow = () => {
     if (selectedRowId !== null) {
       console.log("Deleting Row with ID:", selectedRowId);
-      const updatedData = submittedData.filter((row) => row.id !== selectedRowId);
+      const updatedData = submittedData.filter(
+        (row) => row.id !== selectedRowId
+      );
       setSubmittedData(updatedData);
-  
+
       setRealTimeData((prev) => {
         const newData = { ...prev };
         delete newData[selectedRowId];
@@ -106,7 +108,6 @@ const Position = () => {
     }
     closeModal();
   };
-  
 
   // Handle Select All functionality
   const handleSelectAll = (e) => {
@@ -265,25 +266,35 @@ const Position = () => {
     const interval = setInterval(() => {
       setRealTimeData((prevRealTimeData) => {
         const updatedRealTimeData = { ...prevRealTimeData };
-  
+
         sortedData.forEach((positionn) => {
-          const { id, minLTP, maxLTP, quantity, prevClose, averagePrice, action, sellPrice, position } = positionn;
+          const {
+            id,
+            minLTP,
+            maxLTP,
+            quantity,
+            prevClose,
+            averagePrice,
+            action,
+            sellPrice,
+            position,
+          } = positionn;
           if (!id) {
             console.warn(`⚠️ Position missing ID:`, positionn);
             return; // Skip entries without IDs
           }
-  
+
           const min = parseFloat(minLTP);
           const max = parseFloat(maxLTP);
           const qty = parseInt(quantity, 10) || 0;
           const avgPrice = parseFloat(averagePrice) || 0;
           const sellPrc = parseFloat(sellPrice) || 0;
-  
+
           if (!isNaN(min) && !isNaN(max) && max > min) {
             const steps = (max - min) / 0.05;
             const randomStep = Math.floor(Math.random() * steps);
             const newLTP = min + randomStep * 0.05;
-  
+
             // ✅ Profit Calculation for OPEN positions
             const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
               if (action === "BUY") return (newLTP - avgPrice) * qty;
@@ -291,22 +302,30 @@ const Position = () => {
               return 0;
             };
             const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-  
+
             // ✅ Ensure `profitClose` is set only ONCE for CLOSED positions
             let profitClose = prevRealTimeData[id]?.profitClose;
             if (position === "CLOSE" && profitClose === undefined) {
-              profitClose = (action === "BUY" ? (sellPrc - avgPrice) * qty : (avgPrice - sellPrc) * qty);
+              profitClose =
+                action === "BUY"
+                  ? (sellPrc - avgPrice) * qty
+                  : (avgPrice - sellPrc) * qty;
             }
-  
+
             const totalCurrentAmount = newLTP * qty;
-            const percentageChange = prevClose ? ((newLTP - prevClose) / prevClose) * 100 : 0;
-  
+            const percentageChange = prevClose
+              ? ((newLTP - prevClose) / prevClose) * 100
+              : 0;
+
             updatedRealTimeData[id] = {
               id: id, // Explicitly include the ID
               ltp: parseFloat(newLTP.toFixed(2)),
               totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
               profit: parseFloat(profit.toFixed(2)),
-              profitClose: profitClose !== undefined ? parseFloat(profitClose.toFixed(2)) : 0,
+              profitClose:
+                profitClose !== undefined
+                  ? parseFloat(profitClose.toFixed(2))
+                  : 0,
               percentageChange: parseFloat(percentageChange.toFixed(2)),
               quantity: qty,
               averagePrice: avgPrice,
@@ -316,236 +335,63 @@ const Position = () => {
             };
           }
         });
-  
-        console.log("Sorted Data IDs:", sortedData.map(p => p.id));
-        console.log("Updated Real-Time Data IDs:", Object.values(updatedRealTimeData).map(e => e.id));
-  
+
+        console.log(
+          "Sorted Data IDs:",
+          sortedData.map((p) => p.id)
+        );
+        console.log(
+          "Updated Real-Time Data IDs:",
+          Object.values(updatedRealTimeData).map((e) => e.id)
+        );
+
         // ✅ Calculate total profit correctly
-        const totalProfit = Object.values(updatedRealTimeData).reduce((acc, entry) => {
-          if (!entry.id) {
-            console.warn("Skipping entry with missing ID:", entry);
-            return acc; // Skip this entry
-          }
-  
-          const positionn = sortedData.find((p) => p.id === entry.id);
-  
-          if (!positionn) {
-            console.warn(`No position found for entryId: ${entry.id}`);
-          }
-  
-          console.log("Matched Position:", positionn);
-          console.log("Positionn Position:", positionn?.position);
-  
-          if (positionn?.position === "CLOSE") {
-            return acc + (entry.profitClose || 0);
-          } else {
-            return acc + (entry.profit || 0);
-          }
-        }, 0).toFixed(2);
-  
+        const totalProfit = Object.values(updatedRealTimeData)
+          .reduce((acc, entry) => {
+            if (!entry.id) {
+              console.warn("Skipping entry with missing ID:", entry);
+              return acc; // Skip this entry
+            }
+
+            const positionn = sortedData.find((p) => p.id === entry.id);
+
+            if (!positionn) {
+              console.warn(`No position found for entryId: ${entry.id}`);
+            }
+
+            console.log("Matched Position:", positionn);
+            console.log("Positionn Position:", positionn?.position);
+
+            if (positionn?.position === "CLOSE") {
+              return acc + (entry.profitClose || 0);
+            } else {
+              return acc + (entry.profit || 0);
+            }
+          }, 0)
+          .toFixed(2);
+
         console.log("Final Total Profit:", totalProfit);
         setTotalProfit(totalProfit);
         console.log("updatedRealTimeData", updatedRealTimeData);
         return updatedRealTimeData;
       });
     }, 1000);
-  
+
     return () => clearInterval(interval); // Cleanup on component unmount
   }, [sortedData]); // ✅ Depend only on sortedData
-  
-const mergedData = sortedData.map((item) => {
-  if (!item.id) {
-    console.warn("❌ Missing ID in sortedData:", item);
-  } else {
-    console.log("✅ ID found in sortedData:", item.id);
-  }
 
-  return {
-    ...item,
-    ...(realTimeData[item.id] || {}),
-  };
-});
+  const mergedData = sortedData.map((item) => {
+    if (!item.id) {
+      console.warn("❌ Missing ID in sortedData:", item);
+    } else {
+      console.log("✅ ID found in sortedData:", item.id);
+    }
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const updatedRealTimeData = { ...realTimeDataRef.current };
-
-  //     submittedData.forEach((position) => {
-  //       const {
-  //         minLTP,
-  //         maxLTP,
-  //         quantity,
-  //         prevClose,
-  //         averagePrice,
-  //         action,
-  //         sellPrice,
-  //         id,
-  //       } = position;
-
-  //       const min = parseFloat(minLTP);
-  //       const max = parseFloat(maxLTP);
-  //       const qty = parseInt(quantity, 10) || 0;
-  //       const avgPrice = parseFloat(averagePrice) || 0;
-  //       const sellPrc = parseFloat(sellPrice) || 0;
-
-  //       if (!isNaN(min) && !isNaN(max) && max > min) {
-  //         const steps = (max - min) / 0.05;
-  //         const randomStep = Math.floor(Math.random() * steps);
-  //         const newLTP = min + randomStep * 0.05;
-
-  //         // Profit calculation functions
-  //         const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
-  //           if (action === "BUY") {
-  //             return (newLTP - avgPrice) * qty;
-  //           } else if (action === "SELL") {
-  //             return (avgPrice - newLTP) * qty;
-  //           }
-  //           return 0;
-  //         };
-
-  //         const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-
-  //         const calculateCloseProfit = ({
-  //           action,
-  //           avgPrice,
-  //           sellPrc,
-  //           qty,
-  //         }) => {
-  //           if (action === "BUY") {
-  //             return (sellPrc - avgPrice) * qty;
-  //           } else if (action === "SELL") {
-  //             return (avgPrice - sellPrc) * qty;
-  //           }
-  //           return 0;
-  //         };
-
-  //         const profitClose = calculateCloseProfit({
-  //           action,
-  //           avgPrice,
-  //           sellPrc,
-  //           qty,
-  //         });
-
-  //         const totalCurrentAmount = newLTP * qty;
-  //         const percentageChange = prevClose
-  //           ? ((newLTP - prevClose) / prevClose) * 100
-  //           : 0;
-
-  //         updatedRealTimeData[id] = {
-  //           ltp: parseFloat(newLTP.toFixed(2)),
-  //           totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
-  //           profit: parseFloat(profit.toFixed(2)),
-  //           profitClose: parseFloat(profitClose.toFixed(2)),
-  //           percentageChange: parseFloat(percentageChange.toFixed(2)),
-  //         };
-  //       }
-  //     });
-
-  //     // ✅ Calculate total profit
-  //     const totalProfit = Object.values(updatedRealTimeData).reduce(
-  //       (acc, entry) => acc + (entry.profit || 0),
-  //       0
-  //     );
-
-  //     setTotalProfit(totalProfit);
-  //     console.log("Total Profit:", totalProfit);
-
-  //     realTimeDataRef.current = updatedRealTimeData;
-  //   }, 1000);
-
-  //   return () => clearInterval(interval); // Cleanup on component unmount
-  // }, [submittedData]);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setSubmittedData((prevData) => {
-  //       const updatedData = prevData.map((position) => {
-  //         const {
-  //           minLTP,
-  //           maxLTP,
-  //           quantity,
-  //           prevClose,
-  //           averagePrice,
-  //           action,
-  //           sellPrice,
-  //         } = position;
-
-  //         const min = parseFloat(minLTP);
-  //         const max = parseFloat(maxLTP);
-  //         const qty = parseInt(quantity, 10) || 0;
-  //         const avgPrice = parseFloat(averagePrice) || 0;
-  //         const sellPrc = parseFloat(sellPrice) || 0;
-
-  //         if (!isNaN(min) && !isNaN(max) && max > min) {
-  //           const steps = (max - min) / 0.05;
-  //           const randomStep = Math.floor(Math.random() * steps);
-  //           const newLTP = min + randomStep * 0.05;
-
-  //           // Profit calculation functions
-  //           const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
-  //             if (action === "BUY") {
-  //               return (newLTP - avgPrice) * qty;
-  //             } else if (action === "SELL") {
-  //               return (avgPrice - newLTP) * qty;
-  //             }
-  //             return 0;
-  //           };
-
-  //           const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-
-  //           const calculateCloseProfit = ({
-  //             action,
-  //             avgPrice,
-  //             sellPrc,
-  //             qty,
-  //           }) => {
-  //             if (action === "BUY") {
-  //               return (sellPrc - avgPrice) * qty;
-  //             } else if (action === "SELL") {
-  //               return (avgPrice - sellPrc) * qty;
-  //             }
-  //             return 0;
-  //           };
-
-  //           const profitClose = calculateCloseProfit({
-  //             action,
-  //             avgPrice,
-  //             sellPrc,
-  //             qty,
-  //           });
-  //           console.log("Profit for CLOSE position:", profitClose);
-
-  //           const totalCurrentAmount = newLTP * qty;
-  //           const percentageChange = prevClose
-  //             ? ((newLTP - prevClose) / prevClose) * 100
-  //             : 0;
-
-  //           return {
-  //             ...position,
-  //             ltp: parseFloat(newLTP.toFixed(2)),
-  //             totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
-  //             profit: parseFloat(profit.toFixed(2)),
-  //             profitClose: parseFloat(profitClose.toFixed(2)),
-  //             percentageChange: parseFloat(percentageChange.toFixed(2)),
-  //           };
-  //         }
-  //         return position; // Return unchanged if invalid min/max
-  //       });
-
-  //       // Calculate total profit
-  //       const totalProfit = updatedData.reduce(
-  //         (acc, entry) => acc + (entry.profit || 0),
-  //         0
-  //       );
-  //       setTotalProfit(totalProfit);
-  //       console.log("Total Profit:", totalProfit);
-
-  //       return updatedData;
-  //     });
-  //   }, 1000);
-
-  //   return () => clearInterval(interval); // Cleanup on component unmount
-  // }, []); // Removed `submittedData` dependency to prevent infinite loops
+    return {
+      ...item,
+      ...(realTimeData[item.id] || {}),
+    };
+  });
 
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
@@ -1299,7 +1145,7 @@ const mergedData = sortedData.map((item) => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1328,7 +1174,7 @@ const mergedData = sortedData.map((item) => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1368,7 +1214,7 @@ const mergedData = sortedData.map((item) => {
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-21px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1411,7 +1257,7 @@ const mergedData = sortedData.map((item) => {
                                 <span className="text-customGray text-sm">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1436,7 +1282,7 @@ const mergedData = sortedData.map((item) => {
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1559,19 +1405,19 @@ const mergedData = sortedData.map((item) => {
                     <td className="p-4 text-end">Total P&L</td>
 
                     <td
-                      className={`p-4 text-sm font-normal text-end text-wrap truncate
-${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
-                    >
-                      {parseFloat(totalProfit || 0) >= 0
-                        ? `+${(totalProfit || 0).toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}`
-                        : (totalProfit || 0).toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                    </td>
+  className={`p-4 text-sm font-normal text-end text-wrap truncate
+    ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
+>
+  {parseFloat(totalProfit || 0) >= 0
+    ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
+    : Number(totalProfit || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+</td>
                   </tr>
                 </tfoot>
               </table>
@@ -1967,7 +1813,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1996,7 +1842,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -2036,7 +1882,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -2079,7 +1925,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                 <span className="text-customGray text-sm">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -2104,7 +1950,7 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[1px]">
+                                <span className="text-marketGray text-xs mt-[2px]">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -2224,19 +2070,19 @@ ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
                     <td colSpan="4" className="p-4"></td>
                     <td className="p-4 text-end">Total P&L</td>
                     <td
-                      className={`p-4 text-sm font-normal text-end text-wrap truncate
-  ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
-                    >
-                      {parseFloat(totalProfit || 0) >= 0
-                        ? `+${(totalProfit || 0).toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}`
-                        : (totalProfit || 0).toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                    </td>
+  className={`p-4 text-sm font-normal text-end text-wrap truncate
+    ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
+>
+  {parseFloat(totalProfit || 0) >= 0
+    ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
+    : Number(totalProfit || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+</td>
                     <td className="p-4"></td>
                   </tr>
                 </tfoot>
