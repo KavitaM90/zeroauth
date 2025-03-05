@@ -5,13 +5,19 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["Roboto", "sans-serif"],
+        openSans: ["Open Sans", "sans-serif"], 
       },
       height: {
         "80vh": "80vh", // Custom height class
         3.5: "14px",
+        3.6:"18px",
+        2.6:"11px",
+        1.6:"5px",
       },
       width: {
         5.5: "21px",
+        3.6:"18px",
+        2.6:"11px",
       },
       marginTop: {
         "1px": "1px",
@@ -46,8 +52,12 @@ module.exports = {
         closeText: "#A1A4A7",
         weekText: "#5B97DE",
         weekBackground: "#ECF2FE",
+        profileText:"#9C27B0",
+        profileBg:"#F5E9F7",
+        lossRed:"#DF514C",
       },
       fontSize: {
+        xsx:"8px",
         xs: "10px",
         xms: "9px",
         xxs: "6px",

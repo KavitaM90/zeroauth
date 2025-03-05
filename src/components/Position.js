@@ -1,8 +1,8 @@
 import React from "react";
 import { useEffect, useState, useMemo } from "react";
 import { MdOutlineSearch } from "react-icons/md";
-import { CgShapeCircle } from "react-icons/cg";
-import { MdOutlineFileDownload } from "react-icons/md";
+//import { CgShapeCircle } from "react-icons/cg";
+//import { MdOutlineFileDownload } from "react-icons/md";
 import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
@@ -11,6 +11,11 @@ import sortBy from "lodash/sortBy";
 // import useTradeFormData from "../custom/useTradeFormData";
 // import TradeForm from "./TradeForm";
 import tele1 from "../assets/tele1.jpg";
+import w from "../assets/w.png";
+import circle from "../assets/circle.png";
+//import Analytics from "../assets/Analytics.png";
+//import Downloads from "../assets/Downloads.png";
+import download from "../assets/download.png";
 import { useMarketData } from "../custom/useMarketData";
 
 const Position = () => {
@@ -394,22 +399,23 @@ const Position = () => {
   });
 
   return (
-    <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden ">
+    <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden">
       {/* Flex container for both tables */}
       <div className="flex flex-col lg:flex-row pl-1 lg:space-x-6 relative top-3">
         {/* Table 1: NIFTY/SENSEX Stock Data */}
-        <div className="w-full lg:w-1/3 relative h-[90vh]">
+        <div className="w-full lg:w-1/3 relative h-[95vh]">
           {/* Content Container */}
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 -top-3 -bottom-3 border-r border-gray-300 h-screen"></div>
+          <div className="absolute inset-0 h-full">
+            {/* Border line */}
+            <div className="absolute inset-0 -top-3 -bottom-3 border-r border-gray-300"></div>
 
             {/* First Row: Search Bar */}
             <div className="flex justify-between mb-3 pt-0 relative border-b border-r border-gray-300 -ml-4">
-              <div className="relative w-full sm:w-full backdrop-brightness-200 mx-auto">
+              <div className="relative w-full font-openSans sm:w-full backdrop-brightness-200 mx-auto">
                 <input
                   type="text"
                   placeholder="Search eg: infy bse, nifty fut, gold mcx"
-                  className="p-2 pl-10 pr-20 w-full text-textGray border-none text-xs font-sans font-normal focus:outline-none"
+                  className="p-2 pl-10 pr-20 w-full text-textGray border-none text-xm font-sans leading-4 font-normal focus:outline-none"
                 />
                 <MdOutlineSearch className="absolute top-2 left-2 w-4 h-4 text-textGray ml-2" />
                 <div className="absolute top-2 right-2 text-xs text-gray-400">
@@ -419,7 +425,7 @@ const Position = () => {
             </div>
 
             {/* Second Row: Stock Data Table */}
-            <div className="overflow-y-auto custom-scrollbar max-h-[calc(90vh-80px)]">
+            <div className="overflow-y-auto custom-scrollbar h-[calc(100%-80px)]">
               {paginatedData.length === 0 ? (
                 <div className="flex justify-center items-center text-center text-gray-500 text-xl py-4 mt-5">
                   <div className="flex flex-col space-y-4 items-center">
@@ -431,7 +437,7 @@ const Position = () => {
                       />
                     </div>
                     <div>
-                      <p className="font-[Open Sans] text-customGray text-xl font-normal leading-7">
+                      <p className="font-openSans text-customGray text-xl font-normal leading-7">
                         Nothing here
                       </p>
                     </div>
@@ -441,7 +447,7 @@ const Position = () => {
                       </p>
                     </div>
                     <div>
-                      <button className="w-36 h-9 rounded bg-coustomBlue text-white text-base font-normal">
+                      <button className="w-36 h-9 font-sans rounded bg-coustomBlue text-white text-base font-normal">
                         Add Instrument
                       </button>
                     </div>
@@ -492,7 +498,7 @@ const Position = () => {
             </div>
 
             {/* Pagination and Settings Icon */}
-            <div className="fixed bottom-0 left-0 bg-white w-1/3 mx-auto shadow-md z-10 border-t border-r-2 border-gray-300">
+            <div className="fixed font-openSans bottom-0 left-0 bg-white w-1/3 mx-auto shadow-md z-10 border-t border-r-2 border-gray-300">
               <div className="flex justify-between items-center max-w-screen-xl mx-auto h-9">
                 <div className="flex overflow-x-auto">
                   {[...Array(Math.max(totalPages, 7)).keys()].map((page) => (
@@ -516,7 +522,6 @@ const Position = () => {
             </div>
           </div>
         </div>
-
         {/* Table 2: Holdings Data */}
         <div className="w-full lg:w-2/3 font-sans overflow-y-auto custom-scrollbar h-[90vh]">
           {/* First Row: Holdings Information */}
@@ -541,11 +546,17 @@ const Position = () => {
                   />
                 </div>
                 <span
-                  className="flex items-center space-x-1 text-xs text-coustomBlue"
+                  className="flex items-center space-x-1 text-xs text-coustomBlue cursor-pointer"
                   onClick={onToggle}
                 >
-                  <CgShapeCircle className="h-4 w-4" />
-                  <span className="leading-none">Analytics</span>
+                  <img
+                    src={circle}
+                    alt="circle"
+                    className="h-2.6 w-2.6 cursor-pointer"
+                  />
+                  <span className="leading-none text-xs font-normal">
+                    Analytics
+                  </span>
                 </span>
                 {/* Market Data Form */}
                 {showFormm && (
@@ -756,8 +767,14 @@ const Position = () => {
                   className="flex items-center space-x-1 text-xs text-coustomBlue cursor-pointer"
                   onClick={toggleForm}
                 >
-                  <MdOutlineFileDownload className="h-4 w-4" />
-                  <span className="leading-none">Download</span>
+                  <img
+                    src={download}
+                    alt="download"
+                    className="h-3 w-3 cursor-pointer "
+                  />
+                  <span className="leading-none text-xs font-normal">
+                    Download
+                  </span>
                 </span>
                 {showForm && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -1039,7 +1056,7 @@ const Position = () => {
                 <thead>
                   <tr className="text-customGray text-xm font-sans font-normal leading-4 border-t">
                     {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
-                    <th className="p-4 text-start font-sans text-headingGray font-normal w-3 h-11">
+                    <th className="p-4 text-center font-openSans text-headingGray font-normal w-12 h-11">
                       <input
                         type="checkbox"
                         onChange={handleSelectAll}
@@ -1049,25 +1066,26 @@ const Position = () => {
                         }
                       />
                     </th>
-                    <th className="p-4 text-start font-sans text-headingGray font-normal w-20 h-11">
+
+                    <th className="p-4 text-start font-openSans text-headingGray font-normal w-20 h-11">
                       Product
                     </th>
-                    <th className="p-4 text-headingGray text-start font-sans font-normal w-40 h-11">
+                    <th className="p-4 text-headingGray text-start font-openSans font-normal w-40 h-11">
                       Instrument
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       Qty.
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       Avg.
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       LTP
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray bg-slate-50 w-24 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray bg-slate-50 w-24 h-11">
                       P&L
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       Chg.
                     </th>
                     <th className="w-2 h-11"></th>
@@ -1088,7 +1106,7 @@ const Position = () => {
                       } ${selectedRows.includes(row.id) ? "selected" : ""}`}
                     >
                       {/* Checkbox */}
-                      <td className="p-4 text-center">
+                      <td className="p-4 text-center w-12 font-sans">
                         <input
                           type="checkbox"
                           checked={selectedRows.includes(row.id)}
@@ -1097,7 +1115,7 @@ const Position = () => {
                       </td>
 
                       {/* Order Type */}
-                      <td className="p-4 text-cellGray text-xs font-normal text-center">
+                      <td className="p-4 text-cellGray text-xs font-sans font-normal text-center">
                         <span
                           className={`h-5 w-12 flex justify-center items-center -ml-1 ${
                             row.position === "CLOSE" &&
@@ -1117,7 +1135,7 @@ const Position = () => {
 
                       {/* Stock Details */}
                       <td
-                        className={`p-4 text-start text-sm font-normal  flex items-center justify-start ${
+                        className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : "text-customGray"
@@ -1207,9 +1225,14 @@ const Position = () => {
                                   </sup>
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
-                                  </span>
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
                                 </span>
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
@@ -1234,9 +1257,14 @@ const Position = () => {
                                   </sup>
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
-                                  </span>
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
                                 </span>
                                 <span className="text-sm text-headingGray">
                                   {row.buyPrice}
@@ -1275,9 +1303,14 @@ const Position = () => {
                                   </sup>
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
-                                  </span>
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
                                 </span>
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
@@ -1293,7 +1326,7 @@ const Position = () => {
 
                       {/* Additional Columns (Action, Buy Price, etc.) */}
                       <td
-                        className={`p-4 text-sm font-normal text-end ${
+                        className={`p-4 text-sm font-sans font-normal text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : row.action === "BUY"
@@ -1314,7 +1347,7 @@ const Position = () => {
                       </td>
                       {/* Conditional rendering for averagePrice */}
                       <td
-                        className={`p-4 text-cellGray text-sm font-normal
+                        className={`p-4 text-cellGray font-sans text-sm font-normal
              text-end ${
                row.position === "CLOSE"
                  ? "!bg-rowDisable !text-disableText"
@@ -1333,7 +1366,7 @@ const Position = () => {
                       </td>
                       {/* Conditional rendering for LTP */}
                       <td
-                        className={`p-4 text-cellGray text-sm font-normal text-end ${
+                        className={`p-4 text-cellGray font-sans text-sm font-normal text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : ""
@@ -1346,7 +1379,7 @@ const Position = () => {
                         })}
                       </td>
                       <td
-                        className={`p-4 text-sm font-normal text-end ${
+                        className={`p-4 text-sm font-sans font-normal text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.profit || 0) >= 0
@@ -1379,7 +1412,7 @@ const Position = () => {
                       </td>
 
                       <td
-                        className={`p-4 text-xs font-normal text-end ${
+                        className={`p-4 text-xs font-sans font-normal text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.percentageChange || 0) >= 0
@@ -1405,19 +1438,19 @@ const Position = () => {
                     <td className="p-4 text-end">Total P&L</td>
 
                     <td
-  className={`p-4 text-sm font-normal text-end text-wrap truncate
+                      className={`p-4 text-sm font-normal text-end text-wrap truncate
     ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
->
-  {parseFloat(totalProfit || 0) >= 0
-    ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`
-    : Number(totalProfit || 0).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-</td>
+                    >
+                      {parseFloat(totalProfit || 0) >= 0
+                        ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`
+                        : Number(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                    </td>
                   </tr>
                 </tfoot>
               </table>
@@ -1459,8 +1492,14 @@ const Position = () => {
                   className="flex items-center space-x-1 text-xs text-coustomBlue cursor-pointer"
                   onClick={toggleForm}
                 >
-                  <MdOutlineFileDownload className="h-4 w-4" />
-                  <span className="leading-none">Download</span>
+                  <img
+                    src={download}
+                    alt="download"
+                    className="h-3 w-3 cursor-pointer "
+                  />
+                  <span className="leading-none text-xs font-normal">
+                    Download
+                  </span>
                 </span>
                 {showForm && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -1718,27 +1757,27 @@ const Position = () => {
             {submittedData.length > 0 ? (
               <table className=" table-fixed w-full">
                 <thead>
-                  <tr className="text-customGray text-xm font-sans font-normal leading-4 border-t">
+                  <tr className="text-customGray text-xm font-openSans font-normal leading-4 border-t">
                     {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
-                    <th className="p-4 text-start font-sans text-headingGray font-normal w-24 h-11">
+                    <th className="p-4 text-start font-openSans text-headingGray font-normal w-24 h-11">
                       Product
                     </th>
-                    <th className="p-4 text-headingGray text-start font-sans font-normal w-40 h-11">
+                    <th className="p-4 text-headingGray text-start font-openSans font-normal w-40 h-11">
                       Instrument
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       Qty.
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       Avg.
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       LTP
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray bg-slate-50 w-24 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray bg-slate-50 w-24 h-11">
                       P&L
                     </th>
-                    <th className="p-4 text-end font-sans font-normal text-headingGray w-20 h-11">
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
                       Chg.
                     </th>
                     <th className="w-2 h-11"></th>
@@ -1749,7 +1788,7 @@ const Position = () => {
                     <tr
                       key={row.id}
                       onClick={() => handleRowClick(row.id)}
-                      className={`border-t shadow-sm shadow-gray-100 ${
+                      className={`border-t shadow-sm shadow-gray-100 font-sans ${
                         row.position === "CLOSE"
                           ? "bg-rowDisable !text-disableText"
                           : ""
@@ -1765,7 +1804,7 @@ const Position = () => {
                         </td> */}
 
                       {/* Order Type */}
-                      <td className="p-4 text-cellGray text-xs font-normal text-center">
+                      <td className="p-4 text-cellGray text-xs font-sans font-normal text-center">
                         <span
                           className={`h-5 w-12 flex justify-center items-center -ml-1 ${
                             row.position === "CLOSE" &&
@@ -1785,7 +1824,7 @@ const Position = () => {
 
                       {/* Stock Details */}
                       <td
-                        className={`p-4 text-start text-sm font-normal  flex items-center justify-start ${
+                        className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : "text-customGray"
@@ -1875,9 +1914,14 @@ const Position = () => {
                                   </sup>
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
-                                  </span>
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
                                 </span>
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
@@ -1902,9 +1946,14 @@ const Position = () => {
                                   </sup>
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
-                                  </span>
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
                                 </span>
                                 <span className="text-sm text-headingGray">
                                   {row.buyPrice}
@@ -1943,9 +1992,14 @@ const Position = () => {
                                   </sup>
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
-                                  </span>
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
                                 </span>
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
@@ -1961,7 +2015,7 @@ const Position = () => {
 
                       {/* Additional Columns (Action, Buy Price, etc.) */}
                       <td
-                        className={`p-4 text-sm font-normal text-end ${
+                        className={`p-4 text-sm font-normal font-sans text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : row.action === "BUY"
@@ -1982,7 +2036,7 @@ const Position = () => {
                       </td>
                       {/* Conditional rendering for averagePrice */}
                       <td
-                        className={`p-4 text-cellGray text-sm font-normal
+                        className={`p-4 text-cellGray font-sans text-sm font-normal
                              text-end ${
                                row.position === "CLOSE"
                                  ? "!bg-rowDisable !text-disableText"
@@ -2001,7 +2055,7 @@ const Position = () => {
                       </td>
                       {/* Conditional rendering for LTP */}
                       <td
-                        className={`p-4 text-cellGray text-sm font-normal text-end ${
+                        className={`p-4 text-cellGray font-sans text-sm font-normal text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : ""
@@ -2014,7 +2068,7 @@ const Position = () => {
                         })}
                       </td>
                       <td
-                        className={`p-4 text-sm font-normal text-end ${
+                        className={`p-4 text-sm font-normal font-sans text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.profit || 0) >= 0
@@ -2047,7 +2101,7 @@ const Position = () => {
                       </td>
 
                       <td
-                        className={`p-4 text-xs font-normal text-end ${
+                        className={`p-4 text-xs font-normal font-sans text-end ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.percentageChange || 0) >= 0
@@ -2070,19 +2124,19 @@ const Position = () => {
                     <td colSpan="4" className="p-4"></td>
                     <td className="p-4 text-end">Total P&L</td>
                     <td
-  className={`p-4 text-sm font-normal text-end text-wrap truncate
+                      className={`p-4 text-sm font-normal text-end text-wrap truncate
     ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
->
-  {parseFloat(totalProfit || 0) >= 0
-    ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`
-    : Number(totalProfit || 0).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-</td>
+                    >
+                      {parseFloat(totalProfit || 0) >= 0
+                        ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`
+                        : Number(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                    </td>
                     <td className="p-4"></td>
                   </tr>
                 </tfoot>
@@ -2137,7 +2191,7 @@ const Position = () => {
                     {/* Labels for positive P&L */}
                     {(item.action === "SELL" ? item.profitClose : item.profit) >
                       0 && (
-                      <div className="absolute w-40 top-1/2 transform -translate-y-1/2 left-[calc(50%-167px)] ">
+                      <div className="absolute w-36 top-1/2 transform -translate-y-1/2 left-[calc(50%-163px)]">
                         {item.expiryType === "Weekly" &&
                         (item.marketType === "MCX" ||
                           item.marketType === "BFO" ||
