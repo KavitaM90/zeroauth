@@ -2191,57 +2191,64 @@ const Position = () => {
                     {/* Labels for positive P&L */}
                     {(item.action === "SELL" ? item.profitClose : item.profit) >
                       0 && (
-                      <div className="absolute w-36 top-1/2 transform -translate-y-1/2 left-[calc(50%-163px)]">
-                        {item.expiryType === "Weekly" &&
-                        (item.marketType === "MCX" ||
-                          item.marketType === "BFO" ||
-                          item.marketType === "NFO") ? (
-                          <>
-                            <span className="text-customGray text-xs font-normal uppercase">
-                              {item.stockName}
-                            </span>
-                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                              {item.date}
-                              <sup className="text-xms text-customGray uppercase">
-                                {item.thRdNd}
-                              </sup>
-                            </span>
-                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                              {item.buyPrice}
-                            </span>
-                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                              ({item.orderType})
-                            </span>
-                          </>
-                        ) : item.marketType === "NSE" &&
-                          (item.expiryType === "Weekly" || "Monthly") ? (
-                          <>
-                            <span className="text-customGray text-xs font-normal uppercase">
-                              {item.stockName}
-                            </span>
-                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                              ({item.marketType})
-                            </span>
-                          </>
-                        ) : item.expiryType === "Monthly" &&
+                      <div
+                        className="absolute top-1/2 transform -translate-y-1/2"
+                        style={{
+                          left: `calc(50% - 5px)`, // Fix the label 5px before the starting point of the blue line
+                          transform: "translateX(-100%)", // Align the end of the label with the starting point of the blue line
+                        }}
+                      >
+                        <div className="flex items-center whitespace-nowrap -mt-1.5">
+                          {item.expiryType === "Weekly" &&
                           (item.marketType === "MCX" ||
                             item.marketType === "BFO" ||
                             item.marketType === "NFO") ? (
-                          <>
-                            <span className="text-customGray text-xs font-normal uppercase">
-                              {item.stockName}
-                            </span>
-                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                              {item.buyPrice}
-                            </span>
-                            <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                              ({item.marketType})
-                            </span>
-                          </>
-                        ) : null}
+                            <>
+                              <span className="text-customGray text-xs font-normal uppercase">
+                                {item.stockName}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                {item.date}
+                                <sup className="text-xms text-customGray uppercase">
+                                  {item.thRdNd}
+                                </sup>
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                {item.buyPrice}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                ({item.orderType})
+                              </span>
+                            </>
+                          ) : item.marketType === "NSE" &&
+                            (item.expiryType === "Weekly" || "Monthly") ? (
+                            <>
+                              <span className="text-customGray text-xs font-normal uppercase">
+                                {item.stockName}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                ({item.marketType})
+                              </span>
+                            </>
+                          ) : item.expiryType === "Monthly" &&
+                            (item.marketType === "MCX" ||
+                              item.marketType === "BFO" ||
+                              item.marketType === "NFO") ? (
+                            <>
+                              <span className="text-customGray text-xs font-normal uppercase">
+                                {item.stockName}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                {item.buyPrice}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                ({item.marketType})
+                              </span>
+                            </>
+                          ) : null}
+                        </div>
                       </div>
                     )}
-
                     {/* Labels for negative P&L */}
                     {(item.action === "SELL" ? item.profitClose : item.profit) <
                       0 && (
