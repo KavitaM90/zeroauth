@@ -134,60 +134,68 @@ const Nav = () => {
       </div>
 
       {/* Right Section: Navigation Links */}
-      <div className="hidden sm:flex flex-[2_1_66.66%] items-center justify-between px-4 h-full">
-        {/* Left: Icon */}
-        <div className="flex items-center">
-          <img
-            alt="icon"
-            src={arrow}
-            className="w-5.5 h-3.5 text-iconRed transform rotate-360"
-          />
-        </div>
+      <div className="hidden sm:flex flex-[2_1_66.66%] items-stretch justify-between px-4 h-full">
+  {/* Left: Icon */}
+  <div className="flex items-center">
+    <img
+      alt="icon"
+      src={arrow}
+      className="w-5.5 h-3.5 text-iconRed transform rotate-360"
+    />
+  </div>
 
-        {/* Right: Links and User Info */}
-        <div className="flex items-center space-x-6">
-          <div className="flex space-x-6">
-            {[
-              { to: "/dashboard", label: "Dashboard" },
-              { to: "/orders", label: "Orders" },
-              { to: "/holdings", label: "Holdings" },
-              { to: "/positions", label: "Positions" },
-              { to: "/bids", label: "Bids" },
-              { to: "/funds", label: "Funds" },
-            ].map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`font-openSans  font-normal text-sm  ${
-                  currentPath === link.to ? "text-navActive" : "text-customGray"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <img
-            src={cart}
-            alt="cart"
-            className="h-4 w-4 cursor-pointer text-customGray"
-          />
-          <img
-            src={bell}
-            alt="bell"
-            className="h-4 w-4 cursor-pointer text-customGray"
-          />
-          {/* <CiBellOn className="h-6 w-6 cursor-pointer text-customGray" /> */}
-          <div className="flex items-center space-x-2">
-            <div className="h-3.6 w-3.6 rounded-full flex items-center font-normal text-xsx justify-center text-profileText bg-profileBg uppercase">
-              {marketData?.["profile-name"] || ""}
-            </div>
-            <span className="text-sm text-customGray capitalize">
-              {" "}
-              {marketData?.["username"] || ""}
-            </span>
-          </div>
-        </div>
+  {/* Right: Links and User Info */}
+  <div className="flex items-center space-x-6">
+    <div className="flex space-x-6">
+      {[
+        { to: "/dashboard", label: "Dashboard" },
+        { to: "/orders", label: "Orders" },
+        { to: "/holdings", label: "Holdings" },
+        { to: "/positions", label: "Positions" },
+        { to: "/bids", label: "Bids" },
+        { to: "/funds", label: "Funds" },
+      ].map((link) => (
+        <Link
+          key={link.to}
+          to={link.to}
+          className={`font-openSans font-normal text-sm ${
+            currentPath === link.to ? "text-navActive" : "text-customGray"
+          }`}
+        >
+          {link.label}
+        </Link>
+      ))}
+    </div>
+
+    {/* Vertical Line */}
+    <div className="h-full border-l border-borderGray"></div>
+
+    {/* Cart Icon */}
+    <img
+      src={cart}
+      alt="cart"
+      className="h-4 w-4 cursor-pointer text-customGray"
+    />
+
+    {/* Bell Icon */}
+    <img
+      src={bell}
+      alt="bell"
+      className="h-4 w-4 cursor-pointer text-customGray"
+    />
+
+    {/* User Info */}
+    <div className="flex items-center space-x-2">
+      <div className="h-3.6 w-3.6 rounded-full flex items-center font-normal text-xsx justify-center text-profileText bg-profileBg uppercase">
+        {marketData?.["profile-name"] || ""}
       </div>
+      <span className="text-sm text-customGray capitalize">
+        {" "}
+        {marketData?.["username"] || ""}
+      </span>
+    </div>
+  </div>
+</div>
       {/* Mobile Dropdown Menu */}
       <div
         id="mobile-menu"

@@ -403,7 +403,7 @@ const Position = () => {
       {/* Flex container for both tables */}
       <div className="flex flex-col lg:flex-row pl-1 lg:space-x-6 relative top-3">
         {/* Table 1: NIFTY/SENSEX Stock Data */}
-        <div className="w-full lg:w-1/3 relative h-[95vh]">
+        <div className="w-full lg:w-1/3 relative h-[90vh]">
           {/* Content Container */}
           <div className="absolute inset-0 h-full">
             {/* Border line */}
@@ -2154,160 +2154,155 @@ const Position = () => {
           </div>
           {/* Breakdown with scales */}
           <div className="block items-center space-x-4 mt-4">
-            <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
-              Breakdown
-            </span>
+  <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
+    Breakdown
+  </span>
 
-            {mergedData
-              .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
-              .map((item, index) => (
-                <div key={index}>
-                  {/* Container for each stock's P&L line */}
-                  <div className="relative flex-grow mt-4">
-                    {/* Positive P&L Line (Blue) */}
-                    {item.profit > 0 && (
-                      <div
-                        className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
-                        style={{
-                          width: `${Math.min((item.profit / 100) * 50, 50)}%`,
-                        }}
-                      />
-                    )}
+  {mergedData
+    .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
+    .map((item, index) => (
+      <div key={index}>
+        {/* Container for each stock's P&L line */}
+        <div className="relative flex-grow mt-4">
+          {/* Positive P&L Line (Blue) */}
+          {item.profit > 0 && (
+            <div
+              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
+              style={{
+                width: `calc(${Math.min((item.profit / 100) * 50, 50)}% - 8px)`,
+              }}
+            />
+          )}
 
-                    {/* Negative P&L Line (Red) */}
-                    {item.profit < 0 && (
-                      <div
-                        className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
-                        style={{
-                          width: `${Math.min(
-                            (Math.abs(item.profit) / 100) * 50,
-                            50
-                          )}%`,
-                          transform: "translateX(-100%)",
-                        }}
-                      />
-                    )}
+          {/* Negative P&L Line (Red) */}
+          {item.profit < 0 && (
+            <div
+              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
+              style={{
+                width: `calc(${Math.min((Math.abs(item.profit) / 100) * 50, 50)}% - 8px)`,
+                transform: "translateX(-100%)",
+              }}
+            />
+          )}
 
-                    {/* Labels for positive P&L */}
-                    {(item.action === "SELL" ? item.profitClose : item.profit) >
-                      0 && (
-                      <div
-                        className="absolute top-1/2 transform -translate-y-1/2"
-                        style={{
-                          left: `calc(50% - 5px)`, // Fix the label 5px before the starting point of the blue line
-                          transform: "translateX(-100%)", // Align the end of the label with the starting point of the blue line
-                        }}
-                      >
-                        <div className="flex items-center whitespace-nowrap -mt-1.5">
-                          {item.expiryType === "Weekly" &&
-                          (item.marketType === "MCX" ||
-                            item.marketType === "BFO" ||
-                            item.marketType === "NFO") ? (
-                            <>
-                              <span className="text-customGray text-xs font-normal uppercase">
-                                {item.stockName}
-                              </span>
-                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                                {item.date}
-                                <sup className="text-xms text-customGray uppercase">
-                                  {item.thRdNd}
-                                </sup>
-                              </span>
-                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                                {item.buyPrice}
-                              </span>
-                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                                ({item.orderType})
-                              </span>
-                            </>
-                          ) : item.marketType === "NSE" &&
-                            (item.expiryType === "Weekly" || "Monthly") ? (
-                            <>
-                              <span className="text-customGray text-xs font-normal uppercase">
-                                {item.stockName}
-                              </span>
-                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                                ({item.marketType})
-                              </span>
-                            </>
-                          ) : item.expiryType === "Monthly" &&
-                            (item.marketType === "MCX" ||
-                              item.marketType === "BFO" ||
-                              item.marketType === "NFO") ? (
-                            <>
-                              <span className="text-customGray text-xs font-normal uppercase">
-                                {item.stockName}
-                              </span>
-                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                                {item.buyPrice}
-                              </span>
-                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                                ({item.marketType})
-                              </span>
-                            </>
-                          ) : null}
-                        </div>
-                      </div>
-                    )}
-                    {/* Labels for negative P&L */}
-                    {(item.action === "SELL" ? item.profitClose : item.profit) <
-                      0 && (
-                      <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
-                        {item.expiryType === "Weekly" &&
-                        (item.marketType === "MCX" ||
-                          item.marketType === "BFO" ||
-                          item.marketType === "NFO") ? (
-                          <>
-                            <span className="text-customGray text-xs font-normal uppercase">
-                              {item.stockName}
-                            </span>
-                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                              {item.date}
-                              <sup className="text-xms text-customGray uppercase">
-                                {item.thRdNd}
-                              </sup>
-                            </span>
-                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                              {item.buyPrice}
-                            </span>
-                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                              ({item.orderType})
-                            </span>
-                          </>
-                        ) : item.marketType === "NSE" &&
-                          (item.expiryType === "Weekly" || "Monthly") ? (
-                          <>
-                            <span className="text-customGray text-xs font-normal uppercase">
-                              {item.stockName}
-                            </span>
-                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                              ({item.marketType})
-                            </span>
-                          </>
-                        ) : item.expiryType === "Monthly" &&
-                          (item.marketType === "MCX" ||
-                            item.marketType === "BFO" ||
-                            item.marketType === "NFO") ? (
-                          <>
-                            <span className="text-customGray text-xs font-normal uppercase">
-                              {item.stockName}
-                            </span>
-                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                              {item.buyPrice}
-                            </span>
-                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                              ({item.marketType})
-                            </span>
-                          </>
-                        ) : null}
-                      </div>
-                    )}
-                  </div>
-                  {/* <br /> after each line to ensure new line */}
-                  <br />
-                </div>
-              ))}
-          </div>
+          {/* Labels for positive P&L */}
+          {(item.action === "SELL" ? item.profitClose : item.profit) > 0 && (
+            <div
+              className="absolute top-1/2 transform -translate-y-1/2"
+              style={{
+                left: `calc(50% - 5px)`, // Fix the label 5px before the starting point of the blue line
+                transform: "translateX(-100%)", // Align the end of the label with the starting point of the blue line
+              }}
+            >
+              <div className="flex items-center whitespace-nowrap -mt-1.5">
+                {item.expiryType === "Weekly" &&
+                (item.marketType === "MCX" ||
+                  item.marketType === "BFO" ||
+                  item.marketType === "NFO") ? (
+                  <>
+                    <span className="text-customGray text-xs font-normal uppercase">
+                      {item.stockName}
+                    </span>
+                    <span className="text-customGray text-xs font-normal ml-1">
+                      {item.date}
+                      <sup className="text-xms text-customGray">
+                        {item.thRdNd}
+                      </sup>
+                    </span>
+                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                      {item.buyPrice}
+                    </span>
+                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                      ({item.orderType})
+                    </span>
+                  </>
+                ) : item.marketType === "NSE" &&
+                  (item.expiryType === "Weekly" || "Monthly") ? (
+                  <>
+                    <span className="text-customGray text-xs font-normal uppercase">
+                      {item.stockName}
+                    </span>
+                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                      ({item.marketType})
+                    </span>
+                  </>
+                ) : item.expiryType === "Monthly" &&
+                  (item.marketType === "MCX" ||
+                    item.marketType === "BFO" ||
+                    item.marketType === "NFO") ? (
+                  <>
+                    <span className="text-customGray text-xs font-normal uppercase">
+                      {item.stockName}
+                    </span>
+                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                      {item.buyPrice}
+                    </span>
+                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                      ({item.marketType})
+                    </span>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          )}
+          {/* Labels for negative P&L */}
+          {(item.action === "SELL" ? item.profitClose : item.profit) < 0 && (
+            <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
+              {item.expiryType === "Weekly" &&
+              (item.marketType === "MCX" ||
+                item.marketType === "BFO" ||
+                item.marketType === "NFO") ? (
+                <>
+                  <span className="text-customGray text-xs font-normal uppercase">
+                    {item.stockName}
+                  </span>
+                  <span className="text-customGray text-xs font-normal mr-1">
+                    {item.date}
+                    <sup className="text-xms text-customGray ">
+                      {item.thRdNd}
+                    </sup>
+                  </span>
+                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                    {item.buyPrice}
+                  </span>
+                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                    ({item.orderType})
+                  </span>
+                </>
+              ) : item.marketType === "NSE" &&
+                (item.expiryType === "Weekly" || "Monthly") ? (
+                <>
+                  <span className="text-customGray text-xs font-normal uppercase">
+                    {item.stockName}
+                  </span>
+                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                    ({item.marketType})
+                  </span>
+                </>
+              ) : item.expiryType === "Monthly" &&
+                (item.marketType === "MCX" ||
+                  item.marketType === "BFO" ||
+                  item.marketType === "NFO") ? (
+                <>
+                  <span className="text-customGray text-xs font-normal uppercase">
+                    {item.stockName}
+                  </span>
+                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                    {item.buyPrice}
+                  </span>
+                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                    ({item.marketType})
+                  </span>
+                </>
+              ) : null}
+            </div>
+          )}
+        </div>
+        {/* <br /> after each line to ensure new line */}
+        <br />
+      </div>
+    ))}
+</div>
         </div>
       </div>
     </div>
