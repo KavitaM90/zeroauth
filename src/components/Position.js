@@ -268,10 +268,11 @@ const Position = () => {
   }, [submittedData]);
   console.log("Sorted Data:", sortedData);
   useEffect(() => {
+    console.log("sortedData updated:", sortedData);
     const interval = setInterval(() => {
       setRealTimeData((prevRealTimeData) => {
         const updatedRealTimeData = { ...prevRealTimeData };
-
+  
         sortedData.forEach((positionn) => {
           const {
             id,
@@ -284,89 +285,91 @@ const Position = () => {
             sellPrice,
             position,
           } = positionn;
+  
           if (!id) {
             console.warn(`⚠️ Position missing ID:`, positionn);
             return; // Skip entries without IDs
           }
-
+  
           const min = parseFloat(minLTP);
           const max = parseFloat(maxLTP);
           const qty = parseInt(quantity, 10) || 0;
           const avgPrice = parseFloat(averagePrice) || 0;
           const sellPrc = parseFloat(sellPrice) || 0;
-
-          if (!isNaN(min) && !isNaN(max) && max > min) {
+  
+          if (isNaN(min) || isNaN(max) || isNaN(qty) || isNaN(avgPrice) || isNaN(sellPrc)) {
+            console.warn(`⚠️ Invalid input for position ID ${id}:`, positionn);
+            return; // Skip invalid entries
+          }
+  
+          let newLTP;
+          if (min === max) {
+            newLTP = min; // Use minLTP directly if min === max
+          } else {
             const steps = (max - min) / 0.05;
             const randomStep = Math.floor(Math.random() * steps);
-            const newLTP = min + randomStep * 0.05;
-
-            // ✅ Profit Calculation for OPEN positions
-            const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
-              if (action === "BUY") return (newLTP - avgPrice) * qty;
-              if (action === "SELL") return (avgPrice - newLTP) * qty;
-              return 0;
-            };
-            const profit = calculateProfit({ action, newLTP, avgPrice, qty });
-
-            // ✅ Ensure `profitClose` is set only ONCE for CLOSED positions
-            let profitClose = prevRealTimeData[id]?.profitClose;
-            if (position === "CLOSE" && profitClose === undefined) {
-              profitClose =
-                action === "BUY"
-                  ? (sellPrc - avgPrice) * qty
-                  : (avgPrice - sellPrc) * qty;
-            }
-
-            const totalCurrentAmount = newLTP * qty;
-            const percentageChange = prevClose
-              ? ((newLTP - prevClose) / prevClose) * 100
-              : 0;
-
-            updatedRealTimeData[id] = {
-              id: id, // Explicitly include the ID
-              ltp: parseFloat(newLTP.toFixed(2)),
-              totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
-              profit: parseFloat(profit.toFixed(2)),
-              profitClose:
-                profitClose !== undefined
-                  ? parseFloat(profitClose.toFixed(2))
-                  : 0,
-              percentageChange: parseFloat(percentageChange.toFixed(2)),
-              quantity: qty,
-              averagePrice: avgPrice,
-              sellPrice: sellPrc,
-              action,
-              position,
-            };
+            newLTP = min + randomStep * 0.05;
           }
+  
+          const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
+            if (isNaN(newLTP)) {
+              console.warn(`⚠️ Invalid newLTP for position ID ${id}:`, newLTP);
+              return 0;
+            }
+  
+            if (action === "BUY") return (newLTP - avgPrice) * qty;
+            if (action === "SELL") return (avgPrice - newLTP) * qty;
+            return 0;
+          };
+  
+          const profit = calculateProfit({ action, newLTP, avgPrice, qty });
+          console.log(`Profit for position ID ${id}:`, profit);
+  
+          let profitClose = prevRealTimeData[id]?.profitClose;
+          if (position === "CLOSE" && profitClose === undefined) {
+            profitClose =
+              action === "BUY"
+                ? (sellPrc - avgPrice) * qty
+                : (avgPrice - sellPrc) * qty;
+            console.log(`Profit Close for position ID ${id}:`, profitClose);
+          }
+  
+          const totalCurrentAmount = newLTP * qty;
+          const percentageChange = prevClose
+            ? ((newLTP - prevClose) / prevClose) * 100
+            : 0;
+  
+          updatedRealTimeData[id] = {
+            id: id, // Explicitly include the ID
+            ltp: parseFloat(newLTP.toFixed(2)),
+            totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
+            profit: parseFloat(profit.toFixed(2)),
+            profitClose:
+              profitClose !== undefined
+                ? parseFloat(profitClose.toFixed(2))
+                : 0,
+            percentageChange: parseFloat(percentageChange.toFixed(2)),
+            quantity: qty,
+            averagePrice: avgPrice,
+            sellPrice: sellPrc,
+            action,
+            position,
+          };
         });
-
-        console.log(
-          "Sorted Data IDs:",
-          sortedData.map((p) => p.id)
-        );
-        console.log(
-          "Updated Real-Time Data IDs:",
-          Object.values(updatedRealTimeData).map((e) => e.id)
-        );
-
-        // ✅ Calculate total profit correctly
+  
         const totalProfit = Object.values(updatedRealTimeData)
           .reduce((acc, entry) => {
             if (!entry.id) {
               console.warn("Skipping entry with missing ID:", entry);
               return acc; // Skip this entry
             }
-
+  
             const positionn = sortedData.find((p) => p.id === entry.id);
-
+  
             if (!positionn) {
               console.warn(`No position found for entryId: ${entry.id}`);
             }
-
-            console.log("Matched Position:", positionn);
-            console.log("Positionn Position:", positionn?.position);
-
+  
             if (positionn?.position === "CLOSE") {
               return acc + (entry.profitClose || 0);
             } else {
@@ -374,16 +377,133 @@ const Position = () => {
             }
           }, 0)
           .toFixed(2);
-
+  
         console.log("Final Total Profit:", totalProfit);
         setTotalProfit(totalProfit);
         console.log("updatedRealTimeData", updatedRealTimeData);
         return updatedRealTimeData;
       });
     }, 1000);
-
+  
     return () => clearInterval(interval); // Cleanup on component unmount
-  }, [sortedData]); // ✅ Depend only on sortedData
+  }, [sortedData]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setRealTimeData((prevRealTimeData) => {
+  //       const updatedRealTimeData = { ...prevRealTimeData };
+
+  //       sortedData.forEach((positionn) => {
+  //         const {
+  //           id,
+  //           minLTP,
+  //           maxLTP,
+  //           quantity,
+  //           prevClose,
+  //           averagePrice,
+  //           action,
+  //           sellPrice,
+  //           position,
+  //         } = positionn;
+  //         if (!id) {
+  //           console.warn(`⚠️ Position missing ID:`, positionn);
+  //           return; // Skip entries without IDs
+  //         }
+
+  //         const min = parseFloat(minLTP);
+  //         const max = parseFloat(maxLTP);
+  //         const qty = parseInt(quantity, 10) || 0;
+  //         const avgPrice = parseFloat(averagePrice) || 0;
+  //         const sellPrc = parseFloat(sellPrice) || 0;
+
+  //         if (!isNaN(min) && !isNaN(max) && max > min) {
+  //           const steps = (max - min) / 0.05;
+  //           const randomStep = Math.floor(Math.random() * steps);
+  //           const newLTP = min + randomStep * 0.05;
+
+  //           // ✅ Profit Calculation for OPEN positions
+  //           const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
+  //             if (action === "BUY") return (newLTP - avgPrice) * qty;
+  //             if (action === "SELL") return (avgPrice - newLTP) * qty;
+  //             return 0;
+  //           };
+  //           const profit = calculateProfit({ action, newLTP, avgPrice, qty });
+
+  //           // ✅ Ensure `profitClose` is set only ONCE for CLOSED positions
+  //           let profitClose = prevRealTimeData[id]?.profitClose;
+  //           if (position === "CLOSE" && profitClose === undefined) {
+  //             profitClose =
+  //               action === "BUY"
+  //                 ? (sellPrc - avgPrice) * qty
+  //                 : (avgPrice - sellPrc) * qty;
+  //           }
+
+  //           const totalCurrentAmount = newLTP * qty;
+  //           const percentageChange = prevClose
+  //             ? ((newLTP - prevClose) / prevClose) * 100
+  //             : 0;
+
+  //           updatedRealTimeData[id] = {
+  //             id: id, // Explicitly include the ID
+  //             ltp: parseFloat(newLTP.toFixed(2)),
+  //             totalCurrentAmount: parseFloat(totalCurrentAmount.toFixed(2)),
+  //             profit: parseFloat(profit.toFixed(2)),
+  //             profitClose:
+  //               profitClose !== undefined
+  //                 ? parseFloat(profitClose.toFixed(2))
+  //                 : 0,
+  //             percentageChange: parseFloat(percentageChange.toFixed(2)),
+  //             quantity: qty,
+  //             averagePrice: avgPrice,
+  //             sellPrice: sellPrc,
+  //             action,
+  //             position,
+  //           };
+  //         }
+  //       });
+
+  //       console.log(
+  //         "Sorted Data IDs:",
+  //         sortedData.map((p) => p.id)
+  //       );
+  //       console.log(
+  //         "Updated Real-Time Data IDs:",
+  //         Object.values(updatedRealTimeData).map((e) => e.id)
+  //       );
+
+  //       // ✅ Calculate total profit correctly
+  //       const totalProfit = Object.values(updatedRealTimeData)
+  //         .reduce((acc, entry) => {
+  //           if (!entry.id) {
+  //             console.warn("Skipping entry with missing ID:", entry);
+  //             return acc; // Skip this entry
+  //           }
+
+  //           const positionn = sortedData.find((p) => p.id === entry.id);
+
+  //           if (!positionn) {
+  //             console.warn(`No position found for entryId: ${entry.id}`);
+  //           }
+
+  //           console.log("Matched Position:", positionn);
+  //           console.log("Positionn Position:", positionn?.position);
+
+  //           if (positionn?.position === "CLOSE") {
+  //             return acc + (entry.profitClose || 0);
+  //           } else {
+  //             return acc + (entry.profit || 0);
+  //           }
+  //         }, 0)
+  //         .toFixed(2);
+
+  //       console.log("Final Total Profit:", totalProfit);
+  //       setTotalProfit(totalProfit);
+  //       console.log("updatedRealTimeData", updatedRealTimeData);
+  //       return updatedRealTimeData;
+  //     });
+  //   }, 1000);
+
+  //   return () => clearInterval(interval); // Cleanup on component unmount
+  // }, [sortedData]); // ✅ Depend only on sortedData
 
   const mergedData = sortedData.map((item) => {
     if (!item.id) {
@@ -397,7 +517,68 @@ const Position = () => {
       ...(realTimeData[item.id] || {}),
     };
   });
-
+  const calculateLineWidth = (profit) => {
+    const profitDigits = profit.toString().length; // Get the number of digits
+    let width;
+  
+    // Set fixed width based on the number of digits
+    switch (profitDigits) {
+      case 1: // Single-digit
+        width = 3; // Fixed width for single-digit profits
+        break;
+      case 2: // Two-digit
+        width = 6; // Fixed width for two-digit profits
+        break;
+      case 3: // Three-digit
+        width = 9; // Fixed width for three-digit profits
+        break;
+      case 4: // Four-digit
+        width = 12; // Fixed width for four-digit profits
+        break;
+        case 5: // Single-digit
+        width = 15; // Fixed width for single-digit profits
+        break;
+      case 6: // Two-digit
+        width = 18; // Fixed width for two-digit profits
+        break;
+      case 7: // Three-digit
+        width = 21; // Fixed width for three-digit profits
+        break;
+      case 8: // Four-digit
+        width = 24; // Fixed width for four-digit profits
+        break;
+        case 9: // Single-digit
+        width = 27; // Fixed width for single-digit profits
+        break;
+      case 10: // Two-digit
+        width = 30; // Fixed width for two-digit profits
+        break;
+      case 11: // Three-digit
+        width = 33; // Fixed width for three-digit profits
+        break;
+      case 12: // Four-digit
+        width = 36; // Fixed width for four-digit profits
+        break;
+        case 13: // Single-digit
+        width = 39; // Fixed width for single-digit profits
+        break;
+      case 14: // Two-digit
+        width = 42; // Fixed width for two-digit profits
+        break;
+      case 15: // Three-digit
+        width = 45; // Fixed width for three-digit profits
+        break;
+     
+      // Add more cases if needed
+      default:
+        width = 48; // Default width for profits with 5 or more digits
+        break;
+    }
+  
+    // Ensure the maximum length is 5px less than the current length
+    const maxWidth = width - 5;
+    return Math.max(maxWidth, 10); // Ensure the width doesn't go below a minimum value (e.g., 10%)
+  };
   return (
     <div className="ml-[10px] mr-1 font-sans mt-10 overflow-y-hidden">
       {/* Flex container for both tables */}
@@ -2164,26 +2345,26 @@ const Position = () => {
       <div key={index}>
         {/* Container for each stock's P&L line */}
         <div className="relative flex-grow mt-4">
-          {/* Positive P&L Line (Blue) */}
-          {item.profit > 0 && (
-            <div
-              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
-              style={{
-                width: `calc(${Math.min((item.profit / 100) * 50, 50)}% - 8px)`,
-              }}
-            />
-          )}
+        {/* Positive P&L Line (Blue) */}
+{item.profit > 0 && (
+  <div
+    className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
+    style={{
+      width: `calc(${calculateLineWidth(item.profit)}% - 8px)`,
+    }}
+  />
+)}
 
-          {/* Negative P&L Line (Red) */}
-          {item.profit < 0 && (
-            <div
-              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
-              style={{
-                width: `calc(${Math.min((Math.abs(item.profit) / 100) * 50, 50)}% - 8px)`,
-                transform: "translateX(-100%)",
-              }}
-            />
-          )}
+{/* Negative P&L Line (Red) */}
+{item.profit < 0 && (
+  <div
+    className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
+    style={{
+      width: `calc(${calculateLineWidth(Math.abs(item.profit))}% - 8px)`,
+      transform: "translateX(-100%)",
+    }}
+  />
+)}
 
           {/* Labels for positive P&L */}
           {(item.action === "SELL" ? item.profitClose : item.profit) > 0 && (
