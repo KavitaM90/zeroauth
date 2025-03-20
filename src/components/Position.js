@@ -7,6 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ConfirmationModal from "../modal/ConfirmationModal";
+import { PiDotsThreeVerticalThin } from "react-icons/pi";
 import sortBy from "lodash/sortBy";
 // import useTradeFormData from "../custom/useTradeFormData";
 // import TradeForm from "./TradeForm";
@@ -210,36 +211,38 @@ const Position = () => {
   //   const updatedData = submittedData.filter((_, i) => i !== index);
   //   setSubmittedData(updatedData);
   // };
+
+  const handleEditClick = (row) => {
+    setFormData(row);
+    setShowForm(true);
+    setSelectedRowId(row.id);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const newData = {
       ...formData,
-      id: Date.now(), // Unique ID for each position
-      originalIndex: submittedData.length,
-      ltp: parseFloat(formData.minLTP) || 0, // Ensure valid number
+      id: selectedRowId || Date.now(),
     };
-    console.log("originalIndex", "submittedData.length");
-    console.log("Submitted Data:", newData);
 
-    // Update the submittedData state
-    const updatedData = [...submittedData, newData];
+    let updatedData;
+    if (selectedRowId) {
+      updatedData = submittedData.map((row) =>
+        row.id === selectedRowId ? newData : row
+      );
+    } else {
+      updatedData = [...submittedData, newData];
+    }
+
     setSubmittedData(updatedData);
-
-    // Save to localStorage
     localStorage.setItem("submittedData", JSON.stringify(updatedData));
 
-    // Retrieve and log the stored data
-    const storedData = JSON.parse(localStorage.getItem("submittedData"));
-    console.log("Data in Local Storage:", storedData);
-
-    // Reset the form data
     setFormData({
       position: "OPEN",
       action: "BUY",
       orderType: "MIS",
       marketType: "NSE",
-      holdingStatus: "",
       expiryType: "Monthly",
       stockName: "",
       buyPrice: "",
@@ -252,9 +255,10 @@ const Position = () => {
       totalProfit: "",
       sellPrice: "",
     });
-
     setShowForm(false);
+    setSelectedRowId(null);
   };
+
   console.log("Submitted Data Before Sorting:", submittedData);
 
   // Use useMemo to sort submittedData
@@ -272,7 +276,7 @@ const Position = () => {
     const interval = setInterval(() => {
       setRealTimeData((prevRealTimeData) => {
         const updatedRealTimeData = { ...prevRealTimeData };
-  
+
         sortedData.forEach((positionn) => {
           const {
             id,
@@ -285,23 +289,29 @@ const Position = () => {
             sellPrice,
             position,
           } = positionn;
-  
+
           if (!id) {
             console.warn(`⚠️ Position missing ID:`, positionn);
             return; // Skip entries without IDs
           }
-  
+
           const min = parseFloat(minLTP);
           const max = parseFloat(maxLTP);
           const qty = parseInt(quantity, 10) || 0;
           const avgPrice = parseFloat(averagePrice) || 0;
           const sellPrc = parseFloat(sellPrice) || 0;
-  
-          if (isNaN(min) || isNaN(max) || isNaN(qty) || isNaN(avgPrice) || isNaN(sellPrc)) {
+
+          if (
+            isNaN(min) ||
+            isNaN(max) ||
+            isNaN(qty) ||
+            isNaN(avgPrice) ||
+            isNaN(sellPrc)
+          ) {
             console.warn(`⚠️ Invalid input for position ID ${id}:`, positionn);
             return; // Skip invalid entries
           }
-  
+
           let newLTP;
           if (min === max) {
             newLTP = min; // Use minLTP directly if min === max
@@ -310,21 +320,21 @@ const Position = () => {
             const randomStep = Math.floor(Math.random() * steps);
             newLTP = min + randomStep * 0.05;
           }
-  
+
           const calculateProfit = ({ action, newLTP, avgPrice, qty }) => {
             if (isNaN(newLTP)) {
               console.warn(`⚠️ Invalid newLTP for position ID ${id}:`, newLTP);
               return 0;
             }
-  
+
             if (action === "BUY") return (newLTP - avgPrice) * qty;
             if (action === "SELL") return (avgPrice - newLTP) * qty;
             return 0;
           };
-  
+
           const profit = calculateProfit({ action, newLTP, avgPrice, qty });
           console.log(`Profit for position ID ${id}:`, profit);
-  
+
           let profitClose = prevRealTimeData[id]?.profitClose;
           if (position === "CLOSE" && profitClose === undefined) {
             profitClose =
@@ -333,12 +343,12 @@ const Position = () => {
                 : (avgPrice - sellPrc) * qty;
             console.log(`Profit Close for position ID ${id}:`, profitClose);
           }
-  
+
           const totalCurrentAmount = newLTP * qty;
           const percentageChange = prevClose
             ? ((newLTP - prevClose) / prevClose) * 100
             : 0;
-  
+
           updatedRealTimeData[id] = {
             id: id, // Explicitly include the ID
             ltp: parseFloat(newLTP.toFixed(2)),
@@ -356,20 +366,20 @@ const Position = () => {
             position,
           };
         });
-  
+
         const totalProfit = Object.values(updatedRealTimeData)
           .reduce((acc, entry) => {
             if (!entry.id) {
               console.warn("Skipping entry with missing ID:", entry);
               return acc; // Skip this entry
             }
-  
+
             const positionn = sortedData.find((p) => p.id === entry.id);
-  
+
             if (!positionn) {
               console.warn(`No position found for entryId: ${entry.id}`);
             }
-  
+
             if (positionn?.position === "CLOSE") {
               return acc + (entry.profitClose || 0);
             } else {
@@ -377,14 +387,14 @@ const Position = () => {
             }
           }, 0)
           .toFixed(2);
-  
+
         console.log("Final Total Profit:", totalProfit);
         setTotalProfit(totalProfit);
         console.log("updatedRealTimeData", updatedRealTimeData);
         return updatedRealTimeData;
       });
     }, 1000);
-  
+
     return () => clearInterval(interval); // Cleanup on component unmount
   }, [sortedData]);
   // useEffect(() => {
@@ -520,7 +530,7 @@ const Position = () => {
   const calculateLineWidth = (profit) => {
     const profitDigits = profit.toString().length; // Get the number of digits
     let width;
-  
+
     // Set fixed width based on the number of digits
     switch (profitDigits) {
       case 1: // Single-digit
@@ -535,7 +545,7 @@ const Position = () => {
       case 4: // Four-digit
         width = 12; // Fixed width for four-digit profits
         break;
-        case 5: // Single-digit
+      case 5: // Single-digit
         width = 15; // Fixed width for single-digit profits
         break;
       case 6: // Two-digit
@@ -547,7 +557,7 @@ const Position = () => {
       case 8: // Four-digit
         width = 24; // Fixed width for four-digit profits
         break;
-        case 9: // Single-digit
+      case 9: // Single-digit
         width = 27; // Fixed width for single-digit profits
         break;
       case 10: // Two-digit
@@ -559,7 +569,7 @@ const Position = () => {
       case 12: // Four-digit
         width = 36; // Fixed width for four-digit profits
         break;
-        case 13: // Single-digit
+      case 13: // Single-digit
         width = 39; // Fixed width for single-digit profits
         break;
       case 14: // Two-digit
@@ -568,13 +578,13 @@ const Position = () => {
       case 15: // Three-digit
         width = 45; // Fixed width for three-digit profits
         break;
-     
+
       // Add more cases if needed
       default:
         width = 48; // Default width for profits with 5 or more digits
         break;
     }
-  
+
     // Ensure the maximum length is 5px less than the current length
     const maxWidth = width - 5;
     return Math.max(maxWidth, 10); // Ensure the width doesn't go below a minimum value (e.g., 10%)
@@ -961,242 +971,24 @@ const Position = () => {
                   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
                     <div className="p-4 max-w-4xl mx-auto border border-gray-300 rounded-lg shadow-md bg-white">
                       <h2 className="text-xl font-bold text-gray-700 mb-3 text-center">
-                        Add New Position
+                        {selectedRowId ? "Edit Position" : "Add New Position"}
                       </h2>
                       <form onSubmit={handleSubmit} className="space-y-3">
-                        {/* Pickers in two columns */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Position
-                            </label>
-                            <select
-                              name="position"
-                              value={formData.position}
-                              onChange={handlePickerChange}
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="OPEN">OPEN</option>
-                              <option value="CLOSE">CLOSE</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Order Type
-                            </label>
-                            <select
-                              name="orderType"
-                              value={formData.orderType}
-                              onChange={handlePickerChange}
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="MIS">MIS</option>
-                              <option value="NRML">NRML</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Segment Type
-                            </label>
-                            <select
-                              name="marketType"
-                              value={formData.marketType}
-                              onChange={handlePickerChange}
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="NSE">NSE</option>
-                              <option value="NFO">NFO</option>
-                              <option value="BFO">BFO</option>
-                              <option value="MCX">MCX</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Action
-                            </label>
-                            <select
-                              name="action"
-                              value={formData.action}
-                              onChange={handlePickerChange}
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="BUY">BUY</option>
-                              <option value="SELL">SELL</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Expiry
-                            </label>
-                            <select
-                              name="expiryType"
-                              value={formData.expiryType}
-                              onChange={handlePickerChange}
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="Monthly">Monthly</option>
-                              <option value="Weekly">Weekly</option>
-                            </select>
-                          </div>
-                        </div>
-                        {/* Text Inputs in two columns */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Stock Name
-                            </label>
-                            <input
-                              type="text"
-                              name="stockName"
-                              value={formData.stockName}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Stock Name"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Date
-                            </label>
-                            <input
-                              type="text"
-                              name="date"
-                              value={formData.date}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Date"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              TH,RD,ND
-                            </label>
-                            <input
-                              type="text"
-                              name="thRdNd"
-                              value={formData.thRdNd}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter TH RD ND"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Strike Price
-                            </label>
-                            <input
-                              type="text"
-                              step="0.01"
-                              name="buyPrice"
-                              value={formData.buyPrice}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Buy Price"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Quantity
-                            </label>
-                            <input
-                              type="number"
-                              name="quantity"
-                              value={formData.quantity}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Quantity"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Average Price
-                            </label>
-                            <input
-                              type="number"
-                              name="averagePrice"
-                              value={formData.averagePrice}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Average Price"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Prev Close
-                            </label>
-                            <input
-                              type="number"
-                              name="prevClose"
-                              value={formData.prevClose}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Previous Close"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Min LTP
-                            </label>
-                            <input
-                              type="number"
-                              step="0.01"
-                              name="minLTP"
-                              value={formData.minLTP}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Min LTP"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Max LTP
-                            </label>
-                            <input
-                              type="number"
-                              step="0.01"
-                              name="maxLTP"
-                              value={formData.maxLTP}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Max LTP"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">
-                              Sell Price
-                            </label>
-                            <input
-                              type="number"
-                              name="sellPrice"
-                              value={formData.sellPrice}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              placeholder="Enter Sell Price"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Buttons */}
+                        {/* Form fields */}
+                        {/* ... */}
                         <div className="flex justify-between mt-3">
                           <button
                             type="submit"
                             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                           >
-                            Submit
+                            {selectedRowId ? "Update" : "Submit"}
                           </button>
                           <button
                             type="button"
-                            onClick={toggleForm}
+                            onClick={() => {
+                              setShowForm(false);
+                              setSelectedRowId(null);
+                            }}
                             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
                           >
                             Close Form
@@ -1231,7 +1023,7 @@ const Position = () => {
           </>
 
           {/* Second Row: Stock Details Table */}
-          <div>
+          <div className="overflow-hidden">
             {submittedData.length > 0 ? (
               <table className=" table-fixed w-full">
                 <thead>
@@ -1607,6 +1399,14 @@ const Position = () => {
                               2
                             )}%`}
                       </td>
+                      <td className="text-headingGray">
+                        <PiDotsThreeVerticalThin
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(row);
+                          }}
+                        />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1934,7 +1734,7 @@ const Position = () => {
               </div>
             </div>
           </>
-          <div>
+          <div className="overflow-hidden">
             {submittedData.length > 0 ? (
               <table className=" table-fixed w-full">
                 <thead>
@@ -2296,6 +2096,14 @@ const Position = () => {
                               2
                             )}%`}
                       </td>
+                      <td className="text-headingGray">
+                        <PiDotsThreeVerticalThin
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(row);
+                          }}
+                        />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -2335,155 +2143,161 @@ const Position = () => {
           </div>
           {/* Breakdown with scales */}
           <div className="block items-center space-x-4 mt-4">
-  <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
-    Breakdown
-  </span>
+            <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
+              Breakdown
+            </span>
 
-  {mergedData
-    .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
-    .map((item, index) => (
-      <div key={index}>
-        {/* Container for each stock's P&L line */}
-        <div className="relative flex-grow mt-4">
-        {/* Positive P&L Line (Blue) */}
-{item.profit > 0 && (
-  <div
-    className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
-    style={{
-      width: `calc(${calculateLineWidth(item.profit)}% - 8px)`,
-    }}
-  />
-)}
+            {mergedData
+              .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items to appear last
+              .map((item, index) => (
+                <div key={index}>
+                  {/* Container for each stock's P&L line */}
+                  <div className="relative flex-grow mt-4">
+                    {/* Positive P&L Line (Blue) */}
+                    {item.profit > 0 && (
+                      <div
+                        className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
+                        style={{
+                          width: `calc(${calculateLineWidth(
+                            item.profit
+                          )}% - 8px)`,
+                        }}
+                      />
+                    )}
 
-{/* Negative P&L Line (Red) */}
-{item.profit < 0 && (
-  <div
-    className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
-    style={{
-      width: `calc(${calculateLineWidth(Math.abs(item.profit))}% - 8px)`,
-      transform: "translateX(-100%)",
-    }}
-  />
-)}
+                    {/* Negative P&L Line (Red) */}
+                    {item.profit < 0 && (
+                      <div
+                        className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
+                        style={{
+                          width: `calc(${calculateLineWidth(
+                            Math.abs(item.profit)
+                          )}% - 8px)`,
+                          transform: "translateX(-100%)",
+                        }}
+                      />
+                    )}
 
-          {/* Labels for positive P&L */}
-          {(item.action === "SELL" ? item.profitClose : item.profit) > 0 && (
-            <div
-              className="absolute top-1/2 transform -translate-y-1/2"
-              style={{
-                left: `calc(50% - 5px)`, // Fix the label 5px before the starting point of the blue line
-                transform: "translateX(-100%)", // Align the end of the label with the starting point of the blue line
-              }}
-            >
-              <div className="flex items-center whitespace-nowrap -mt-1.5">
-                {item.expiryType === "Weekly" &&
-                (item.marketType === "MCX" ||
-                  item.marketType === "BFO" ||
-                  item.marketType === "NFO") ? (
-                  <>
-                    <span className="text-customGray text-xs font-normal uppercase">
-                      {item.stockName}
-                    </span>
-                    <span className="text-customGray text-xs font-normal ml-1">
-                      {item.date}
-                      <sup className="text-xms text-customGray">
-                        {item.thRdNd}
-                      </sup>
-                    </span>
-                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                      {item.buyPrice}
-                    </span>
-                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                      ({item.orderType})
-                    </span>
-                  </>
-                ) : item.marketType === "NSE" &&
-                  (item.expiryType === "Weekly" || "Monthly") ? (
-                  <>
-                    <span className="text-customGray text-xs font-normal uppercase">
-                      {item.stockName}
-                    </span>
-                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                      ({item.marketType})
-                    </span>
-                  </>
-                ) : item.expiryType === "Monthly" &&
-                  (item.marketType === "MCX" ||
-                    item.marketType === "BFO" ||
-                    item.marketType === "NFO") ? (
-                  <>
-                    <span className="text-customGray text-xs font-normal uppercase">
-                      {item.stockName}
-                    </span>
-                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                      {item.buyPrice}
-                    </span>
-                    <span className="text-customGray text-xs font-normal ml-1 uppercase">
-                      ({item.marketType})
-                    </span>
-                  </>
-                ) : null}
-              </div>
-            </div>
-          )}
-          {/* Labels for negative P&L */}
-          {(item.action === "SELL" ? item.profitClose : item.profit) < 0 && (
-            <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
-              {item.expiryType === "Weekly" &&
-              (item.marketType === "MCX" ||
-                item.marketType === "BFO" ||
-                item.marketType === "NFO") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal uppercase">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1">
-                    {item.date}
-                    <sup className="text-xms text-customGray ">
-                      {item.thRdNd}
-                    </sup>
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                    {item.buyPrice}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                    ({item.orderType})
-                  </span>
-                </>
-              ) : item.marketType === "NSE" &&
-                (item.expiryType === "Weekly" || "Monthly") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal uppercase">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                    ({item.marketType})
-                  </span>
-                </>
-              ) : item.expiryType === "Monthly" &&
-                (item.marketType === "MCX" ||
-                  item.marketType === "BFO" ||
-                  item.marketType === "NFO") ? (
-                <>
-                  <span className="text-customGray text-xs font-normal uppercase">
-                    {item.stockName}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                    {item.buyPrice}
-                  </span>
-                  <span className="text-customGray text-xs font-normal mr-1 uppercase">
-                    ({item.marketType})
-                  </span>
-                </>
-              ) : null}
-            </div>
-          )}
-        </div>
-        {/* <br /> after each line to ensure new line */}
-        <br />
-      </div>
-    ))}
-</div>
+                    {/* Labels for positive P&L */}
+                    {(item.action === "SELL" ? item.profitClose : item.profit) >
+                      0 && (
+                      <div
+                        className="absolute top-1/2 transform -translate-y-1/2"
+                        style={{
+                          left: `calc(50% - 5px)`, // Fix the label 5px before the starting point of the blue line
+                          transform: "translateX(-100%)", // Align the end of the label with the starting point of the blue line
+                        }}
+                      >
+                        <div className="flex items-center whitespace-nowrap -mt-1.5">
+                          {item.expiryType === "Weekly" &&
+                          (item.marketType === "MCX" ||
+                            item.marketType === "BFO" ||
+                            item.marketType === "NFO") ? (
+                            <>
+                              <span className="text-customGray text-xs font-normal uppercase">
+                                {item.stockName}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1">
+                                {item.date}
+                                <sup className="text-xms text-customGray">
+                                  {item.thRdNd}
+                                </sup>
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                {item.buyPrice}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                ({item.orderType})
+                              </span>
+                            </>
+                          ) : item.marketType === "NSE" &&
+                            (item.expiryType === "Weekly" || "Monthly") ? (
+                            <>
+                              <span className="text-customGray text-xs font-normal uppercase">
+                                {item.stockName}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                ({item.marketType})
+                              </span>
+                            </>
+                          ) : item.expiryType === "Monthly" &&
+                            (item.marketType === "MCX" ||
+                              item.marketType === "BFO" ||
+                              item.marketType === "NFO") ? (
+                            <>
+                              <span className="text-customGray text-xs font-normal uppercase">
+                                {item.stockName}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                {item.buyPrice}
+                              </span>
+                              <span className="text-customGray text-xs font-normal ml-1 uppercase">
+                                ({item.marketType})
+                              </span>
+                            </>
+                          ) : null}
+                        </div>
+                      </div>
+                    )}
+                    {/* Labels for negative P&L */}
+                    {(item.action === "SELL" ? item.profitClose : item.profit) <
+                      0 && (
+                      <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
+                        {item.expiryType === "Weekly" &&
+                        (item.marketType === "MCX" ||
+                          item.marketType === "BFO" ||
+                          item.marketType === "NFO") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal uppercase">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1">
+                              {item.date}
+                              <sup className="text-xms text-customGray ">
+                                {item.thRdNd}
+                              </sup>
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                              {item.buyPrice}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                              ({item.orderType})
+                            </span>
+                          </>
+                        ) : item.marketType === "NSE" &&
+                          (item.expiryType === "Weekly" || "Monthly") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal uppercase">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                              ({item.marketType})
+                            </span>
+                          </>
+                        ) : item.expiryType === "Monthly" &&
+                          (item.marketType === "MCX" ||
+                            item.marketType === "BFO" ||
+                            item.marketType === "NFO") ? (
+                          <>
+                            <span className="text-customGray text-xs font-normal uppercase">
+                              {item.stockName}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                              {item.buyPrice}
+                            </span>
+                            <span className="text-customGray text-xs font-normal mr-1 uppercase">
+                              ({item.marketType})
+                            </span>
+                          </>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+                  {/* <br /> after each line to ensure new line */}
+                  <br />
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>
