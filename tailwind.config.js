@@ -13,6 +13,7 @@ module.exports = {
         3.6:"18px",
         2.6:"11px",
         1.6:"5px",
+        
       },
       width: {
         5.5: "21px",

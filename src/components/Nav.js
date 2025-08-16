@@ -1,21 +1,19 @@
-import React from "react";
-//import { CiBellOn } from "react-icons/ci";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useMarketData } from "../custom/useMarketData";
 import arrow from "../assets/arrow.jpg";
 import bell from "../assets/bell.png";
 import cart from "../assets/cart.png";
 
-const Nav = () => {
+const Nav = ({ onLogout }) => {
   const { marketData } = useMarketData();
+  const [showLogout, setShowLogout] = useState(false);
   const location = useLocation();
   const currentPath = location.pathname;
-  //   const getInitials = (name) => {
-  //     return name.split(' ').map(n => n[0]).join('');
-  //   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-bgWhite p-0 shadow-md z-50 flex items-center h-12 overflow-hidden ">
+    // Removed 'overflow-hidden' from the nav element to allow dropdown to show
+    <nav className="fixed top-0 left-0 w-full bg-bgWhite p-0 shadow-md z-50 flex items-center h-12">
       {/* Left Section: NIFTY and SENSEX */}
       <div className="flex-[1_1_33.33%] flex items-center font-sans justify-between border-r border-borderGray px-2 h-full">
         <div className="flex space-x-4 ">
@@ -135,67 +133,84 @@ const Nav = () => {
 
       {/* Right Section: Navigation Links */}
       <div className="hidden sm:flex flex-[2_1_66.66%] items-stretch justify-between px-4 h-full">
-  {/* Left: Icon */}
-  <div className="flex items-center">
-    <img
-      alt="icon"
-      src={arrow}
-      className="w-5.5 h-3.5 text-iconRed transform rotate-360"
-    />
-  </div>
+        {/* Left: Icon */}
+        <div className="flex items-center">
+          <img
+            alt="icon"
+            src={arrow}
+            className="w-5.5 h-3.5 text-iconRed transform rotate-360"
+          />
+        </div>
 
-  {/* Right: Links and User Info */}
-  <div className="flex items-center space-x-6">
-    <div className="flex space-x-6">
-      {[
-        { to: "/dashboard", label: "Dashboard" },
-        { to: "/orders", label: "Orders" },
-        { to: "/holdings", label: "Holdings" },
-        { to: "/positions", label: "Positions" },
-        { to: "/bids", label: "Bids" },
-        { to: "/funds", label: "Funds" },
-      ].map((link) => (
-        <Link
-          key={link.to}
-          to={link.to}
-          className={`font-openSans font-normal text-sm ${
-            currentPath === link.to ? "text-navActive" : "text-customGray"
-          }`}
-        >
-          {link.label}
-        </Link>
-      ))}
-    </div>
+        {/* Right: Links and User Info */}
+        <div className="flex items-center space-x-6">
+          <div className="flex space-x-6">
+            {[
+              { to: "/dashboard", label: "Dashboard" },
+              { to: "/orders", label: "Orders" },
+              { to: "/holdings", label: "Holdings" },
+              { to: "/positions", label: "Positions" },
+              { to: "/bids", label: "Bids" },
+              { to: "/funds", label: "Funds" },
+            ].map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`font-openSans font-normal text-sm ${
+                  currentPath === link.to ? "text-navActive" : "text-customGray"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
 
-    {/* Vertical Line */}
-    <div className="h-full border-l border-borderGray"></div>
+          {/* Vertical Line */}
+          <div className="h-full border-l border-borderGray"></div>
 
-    {/* Cart Icon */}
-    <img
-      src={cart}
-      alt="cart"
-      className="h-4 w-4 cursor-pointer text-customGray"
-    />
+          {/* Cart Icon */}
+          <img
+            src={cart}
+            alt="cart"
+            className="h-4 w-4 cursor-pointer text-customGray"
+          />
 
-    {/* Bell Icon */}
-    <img
-      src={bell}
-      alt="bell"
-      className="h-4 w-4 cursor-pointer text-customGray"
-    />
+          {/* Bell Icon */}
+          <img
+            src={bell}
+            alt="bell"
+            className="h-4 w-4 cursor-pointer text-customGray"
+          />
 
-    {/* User Info */}
-    <div className="flex items-center space-x-2">
-      <div className="h-3.6 w-3.6 rounded-full flex items-center font-normal text-xsx justify-center text-profileText bg-profileBg uppercase">
-        {marketData?.["profile-name"] || ""}
+          {/* User Info with Logout Dropdown */}
+          <div className="relative">
+            {/* Profile clickable area */}
+            <div
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={() => setShowLogout((prev) => !prev)}
+            >
+              <div className="h-9 w-9 rounded-full flex items-center justify-center font-normal text-xs text-profileText bg-profileBg uppercase">
+                {marketData?.["profile-name"]?.[0] || ""}
+              </div>
+              <span className="text-sm text-customGray capitalize">
+                {marketData?.["username"] || ""}
+              </span>
+            </div>
+
+            {/* Logout dropdown */}
+            {showLogout && (
+              <div className="absolute right-0 mt-2 bg-white border rounded-lg shadow-lg z-50">
+                <button
+                  onClick={onLogout}
+                  className="px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <span className="text-sm text-customGray capitalize">
-        {" "}
-        {marketData?.["username"] || ""}
-      </span>
-    </div>
-  </div>
-</div>
       {/* Mobile Dropdown Menu */}
       <div
         id="mobile-menu"

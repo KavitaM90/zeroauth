@@ -180,7 +180,7 @@ const Position = () => {
     position: "OPEN",
     action: "BUY",
     orderType: "MIS",
-    marketType: "NSE",
+    marketType: "EQ",
     expiryType: "Monthly",
     stockName: "",
     buyPrice: "",
@@ -242,7 +242,7 @@ const Position = () => {
       position: "OPEN",
       action: "BUY",
       orderType: "MIS",
-      marketType: "NSE",
+      marketType: "EQ",
       expiryType: "Monthly",
       stockName: "",
       buyPrice: "",
@@ -1115,7 +1115,7 @@ const Position = () => {
                         }`}
                       >
                         <span className="mx-1 text-labelGray tracking-wider">
-                          {row.marketType === "NSE" &&
+                          {row.marketType === "EQ" &&
                           row.expiryType === "Monthly" &&
                           row.position === "CLOSE" ? (
                             <>
@@ -1123,12 +1123,12 @@ const Position = () => {
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
-                          ) : row.marketType === "NSE" &&
+                          ) : row.marketType === "EQ" &&
                             row.position === "OPEN" &&
                             (row.expiryType === "Monthly" || "Weekly") ? (
                             <>
@@ -1136,7 +1136,7 @@ const Position = () => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1152,12 +1152,12 @@ const Position = () => {
                                 <span className="text-headingGray text-sm">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
-                          ) : row.marketType === "NSE" &&
+                          ) : row.marketType === "EQ" &&
                             row.position === "OPEN" &&
                             (row.expiryType === "Monthly" || "Weekly") ? (
                             <>
@@ -1165,12 +1165,12 @@ const Position = () => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
-                          ) : row.marketType === "NSE" &&
+                          ) : row.marketType === "EQ" &&
                             row.expiryType === "Weekly" &&
                             row.position === "CLOSE" ? (
                             <>
@@ -1178,7 +1178,7 @@ const Position = () => {
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1210,7 +1210,7 @@ const Position = () => {
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-21px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1242,7 +1242,7 @@ const Position = () => {
                                 <span className="text-sm text-headingGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1258,7 +1258,7 @@ const Position = () => {
                                 <span className="text-customGray text-sm">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1288,7 +1288,7 @@ const Position = () => {
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1529,7 +1529,7 @@ const Position = () => {
                               onChange={handlePickerChange}
                               className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             >
-                              <option value="NSE">NSE</option>
+                              <option value="EQ">EQ</option>
                               <option value="NFO">NFO</option>
                               <option value="BFO">BFO</option>
                               <option value="MCX">MCX</option>
@@ -1812,7 +1812,7 @@ const Position = () => {
                         }`}
                       >
                         <span className="mx-1 text-labelGray tracking-wider">
-                          {row.marketType === "NSE" &&
+                          {row.marketType === "EQ" &&
                           row.expiryType === "Monthly" &&
                           row.position === "CLOSE" ? (
                             <>
@@ -1820,12 +1820,12 @@ const Position = () => {
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px] ">
+                                <span className="text-secheadingGray text-xs mt-1 ">
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
-                          ) : row.marketType === "NSE" &&
+                          ) : row.marketType === "EQ" &&
                             row.position === "OPEN" &&
                             (row.expiryType === "Monthly" || "Weekly") ? (
                             <>
@@ -1833,7 +1833,7 @@ const Position = () => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1849,12 +1849,12 @@ const Position = () => {
                                 <span className="text-headingGray text-sm">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
-                          ) : row.marketType === "NSE" &&
+                          ) : row.marketType === "EQ" &&
                             row.position === "OPEN" &&
                             (row.expiryType === "Monthly" || "Weekly") ? (
                             <>
@@ -1862,12 +1862,12 @@ const Position = () => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
-                          ) : row.marketType === "NSE" &&
+                          ) : row.marketType === "EQ" &&
                             row.expiryType === "Weekly" &&
                             row.position === "CLOSE" ? (
                             <>
@@ -1875,7 +1875,7 @@ const Position = () => {
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1907,7 +1907,7 @@ const Position = () => {
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1939,7 +1939,7 @@ const Position = () => {
                                 <span className="text-sm text-headingGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-[1px]">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1955,7 +1955,7 @@ const Position = () => {
                                 <span className="text-customGray text-sm">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1985,7 +1985,7 @@ const Position = () => {
                                 <span className="text-sm text-customGray">
                                   {row.buyPrice}
                                 </span>
-                                <span className="text-marketGray text-xs mt-[2px]">
+                                <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -2210,7 +2210,7 @@ const Position = () => {
                                 ({item.orderType})
                               </span>
                             </>
-                          ) : item.marketType === "NSE" &&
+                          ) : item.marketType === "EQ" &&
                             (item.expiryType === "Weekly" || "Monthly") ? (
                             <>
                               <span className="text-customGray text-xs font-normal uppercase">
@@ -2264,7 +2264,7 @@ const Position = () => {
                               ({item.orderType})
                             </span>
                           </>
-                        ) : item.marketType === "NSE" &&
+                        ) : item.marketType === "EQ" &&
                           (item.expiryType === "Weekly" || "Monthly") ? (
                           <>
                             <span className="text-customGray text-xs font-normal uppercase">
