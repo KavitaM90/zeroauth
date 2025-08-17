@@ -8,12 +8,22 @@ module.exports = {
         openSans: ["Open Sans", "sans-serif"], 
       },
       height: {
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        '80vh': '80vh', // Custom height class
+=======
+>>>>>>> Stashed changes
         "80vh": "80vh", // Custom height class
         3.5: "14px",
         3.6:"18px",
         2.6:"11px",
         1.6:"5px",
         
+<<<<<<< Updated upstream
+=======
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
       },
       width: {
         5.5: "21px",

@@ -180,7 +180,16 @@ const Position = () => {
     position: "OPEN",
     action: "BUY",
     orderType: "MIS",
+<<<<<<< Updated upstream
     marketType: "EQ",
+=======
+<<<<<<< HEAD
+    holdingStatus: "",
+    marketType: "NSE",
+=======
+    marketType: "EQ",
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
     expiryType: "Monthly",
     stockName: "",
     buyPrice: "",
@@ -242,7 +251,16 @@ const Position = () => {
       position: "OPEN",
       action: "BUY",
       orderType: "MIS",
+<<<<<<< Updated upstream
       marketType: "EQ",
+=======
+<<<<<<< HEAD
+      marketType: "NSE",
+      holdingStatus: "",
+=======
+      marketType: "EQ",
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
       expiryType: "Monthly",
       stockName: "",
       buyPrice: "",
@@ -958,6 +976,13 @@ const Position = () => {
                   className="flex items-center space-x-1 text-xs text-coustomBlue cursor-pointer"
                   onClick={toggleForm}
                 >
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+                  <MdOutlineFileDownload className="h-4 w-4" />
+                  <span className="leading-none">Download</span>
+=======
+>>>>>>> Stashed changes
                   <img
                     src={download}
                     alt="download"
@@ -966,6 +991,8 @@ const Position = () => {
                   <span className="leading-none text-xs font-normal">
                     Download
                   </span>
+<<<<<<< Updated upstream
+=======
                 </span>
                 {showForm && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -976,6 +1003,749 @@ const Position = () => {
                       <form onSubmit={handleSubmit} className="space-y-3">
                         {/* Form fields */}
                         {/* ... */}
+                        <div className="flex justify-between mt-3">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          >
+                            {selectedRowId ? "Update" : "Submit"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowForm(false);
+                              setSelectedRowId(null);
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                          >
+                            Close Form
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Render TradeForm as a modal if isTradeFormVisible is true */}
+            {/* {isTradeFormVisible && (
+              <div className="modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="relative w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
+                  <TradeForm
+                    formData={formData}
+                    onFormSubmit={handleFormSubmit}
+                    onClose={handleClose}
+                  />{" "} */}
+            {/* Your TradeForm component */}
+            {/* <button
+                    onClick={handleClose}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )} */}
+          </>
+
+          {/* Second Row: Stock Details Table */}
+          <div className="overflow-hidden">
+            {submittedData.length > 0 ? (
+              <table className=" table-fixed w-full">
+                <thead>
+                  <tr className="text-customGray text-xm font-sans font-normal leading-4 border-t">
+                    {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
+                    <th className="p-4 text-center font-openSans text-headingGray font-normal w-12 h-11">
+                      <input
+                        type="checkbox"
+                        onChange={handleSelectAll}
+                        checked={
+                          selectedRows.length > 0 &&
+                          selectedRows.length === data.length
+                        }
+                      />
+                    </th>
+
+                    <th className="p-4 text-start font-openSans text-headingGray font-normal w-20 h-11">
+                      Product
+                    </th>
+                    <th className="p-4 text-headingGray text-start font-openSans font-normal w-40 h-11">
+                      Instrument
+                    </th>
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+                      Qty.
+                    </th>
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+                      Avg.
+                    </th>
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+                      LTP
+                    </th>
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray bg-slate-50 w-24 h-11">
+                      P&L
+                    </th>
+                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+                      Chg.
+                    </th>
+                    <th className="w-2 h-11"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mergedData.map((row) => (
+                    <tr
+                      key={row.id || row.originalIndex} // Use unique id
+                      onClick={() => handleRowClick(row.id)} // Pass id instead of index
+                      // className={`border-t shadow-sm shadow-gray-100 ${
+                      //   row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
+                      // }`}
+                      className={`border-t shadow-sm shadow-gray-100 ${
+                        row.position === "CLOSE"
+                          ? "bg-rowDisable !text-disableText"
+                          : ""
+                      } ${selectedRows.includes(row.id) ? "selected" : ""}`}
+                    >
+                      {/* Checkbox */}
+                      <td className="p-4 text-center w-12 font-sans">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(row.id)}
+                          onChange={() => handleRowSelect(row.id)}
+                        />
+                      </td>
+
+                      {/* Order Type */}
+                      <td className="p-4 text-cellGray text-xs font-sans font-normal text-center">
+                        <span
+                          className={`h-5 w-12 flex justify-center items-center -ml-1 ${
+                            row.position === "CLOSE" &&
+                            (row.expiryType === "Weekly" ||
+                              row.expiryType === "Monthly")
+                              ? "!bg-bgOff !text-disableText"
+                              : row.orderType === "MIS"
+                              ? "bg-productBg text-textProduct"
+                              : row.orderType === "NRML"
+                              ? "bg-purple-100 text-purple-800"
+                              : ""
+                          }`}
+                        >
+                          {row.orderType}
+                        </span>
+                      </td>
+
+                      {/* Stock Details */}
+                      <td
+                        className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
+                          row.position === "CLOSE"
+                            ? "!bg-rowDisable !text-disableText"
+                            : "text-customGray"
+                        }`}
+                      >
+                        <span className="mx-1 text-labelGray tracking-wider">
+                          {row.marketType === "EQ" &&
+                          row.expiryType === "Monthly" &&
+                          row.position === "CLOSE" ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-headingGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.marketType === "EQ" &&
+                            row.position === "OPEN" &&
+                            (row.expiryType === "Monthly" || "Weekly") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : (row.marketType === "NFO" || "BFO" || "MCX") &&
+                            row.position === "CLOSE" &&
+                            row.expiryType === "Monthly" ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-headingGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-headingGray text-sm">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.marketType === "EQ" &&
+                            row.position === "OPEN" &&
+                            (row.expiryType === "Monthly" || "Weekly") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.marketType === "EQ" &&
+                            row.expiryType === "Weekly" &&
+                            row.position === "CLOSE" ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-headingGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.position === "OPEN" &&
+                            row.expiryType === "Weekly" &&
+                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.date}
+                                  <sup className="text-xms text-customGray">
+                                    {row.thRdNd}
+                                  </sup>
+                                </span>
+                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                    W
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.position === "CLOSE" &&
+                            row.expiryType === "Weekly" &&
+                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-headingGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-sm text-headingGray">
+                                  {row.date}
+                                  <sup className="text-xms text-headingGray">
+                                    {row.thRdNd}
+                                  </sup>
+                                </span>
+                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                    W
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
+                                </span>
+                                <span className="text-sm text-headingGray">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.position === "OPEN" &&
+                            row.expiryType === "Monthly" &&
+                            (row.marketType === "MCX" || "BFO" || "NFO") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-customGray text-sm">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.date}
+                                  <sup className="text-xms text-customGray">
+                                    {row.thRdNd}
+                                  </sup>
+                                </span>
+                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                    W
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          )}
+                        </span>
+                      </td>
+
+                      {/* Additional Columns (Action, Buy Price, etc.) */}
+                      <td
+                        className={`p-4 text-sm font-sans font-normal text-end ${
+                          row.position === "CLOSE"
+                            ? "!bg-rowDisable !text-disableText"
+                            : row.action === "BUY"
+                            ? "text-scaleBlue"
+                            : row.action === "SELL"
+                            ? "text-stockRed"
+                            : "text-stockDefault"
+                        }`}
+                      >
+                        {row.position === "CLOSE"
+                          ? "0"
+                          : `${row.action === "SELL" ? "-" : ""}${Math.abs(
+                              parseFloat(row.quantity || 0)
+                            ).toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}`}
+                      </td>
+                      {/* Conditional rendering for averagePrice */}
+                      <td
+                        className={`p-4 text-cellGray font-sans text-sm font-normal
+             text-end ${
+               row.position === "CLOSE"
+                 ? "!bg-rowDisable !text-disableText"
+                 : ""
+             }`}
+                      >
+                        {row.position === "CLOSE"
+                          ? "0.00"
+                          : parseFloat(row.averagePrice || 0).toLocaleString(
+                              "en-IN",
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )}
+                      </td>
+                      {/* Conditional rendering for LTP */}
+                      <td
+                        className={`p-4 text-cellGray font-sans text-sm font-normal text-end ${
+                          row.position === "CLOSE"
+                            ? "!bg-rowDisable !text-disableText"
+                            : ""
+                        }`}
+                      >
+                        {parseFloat(row.ltp || 0) >= 0 ? "" : ""}
+                        {parseFloat(row.ltp || 0).toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </td>
+                      <td
+                        className={`p-4 text-sm font-sans font-normal text-end ${
+                          row.position === "CLOSE"
+                            ? "!bg-rowDisable !text-disableText"
+                            : parseFloat(row.profit || 0) >= 0
+                            ? "bg-slate-50 text-textGreen"
+                            : "bg-slate-50 text-stockRed"
+                        }`}
+                      >
+                        {row.position === "CLOSE"
+                          ? parseFloat(row.profitClose || 0) >= 0
+                            ? "+"
+                            : ""
+                          : parseFloat(row.profit || 0) >= 0
+                          ? "+"
+                          : ""}
+                        {row.position === "CLOSE"
+                          ? parseFloat(row.profitClose || 0).toLocaleString(
+                              "en-IN",
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )
+                          : parseFloat(row.profit || 0).toLocaleString(
+                              "en-IN",
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )}
+                      </td>
+
+                      <td
+                        className={`p-4 text-xs font-sans font-normal text-end ${
+                          row.position === "CLOSE"
+                            ? "!bg-rowDisable !text-disableText"
+                            : parseFloat(row.percentageChange || 0) >= 0
+                            ? "text-textGreen"
+                            : "text-stockRed"
+                        }`}
+                      >
+                        {row.position === "CLOSE"
+                          ? "0.00%"
+                          : `${parseFloat(row.percentageChange || 0).toFixed(
+                              2
+                            )}%`}
+                      </td>
+                      <td className="text-headingGray">
+                        <PiDotsThreeVerticalThin
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(row);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+
+                <tfoot>
+                  <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
+                    <td colSpan="4" className="p-4"></td>
+
+                    <td className="p-4"></td>
+                    <td className="p-4 text-end">Total P&L</td>
+
+                    <td
+                      className={`p-4 text-sm font-normal text-end text-wrap truncate
+    ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
+                    >
+                      {parseFloat(totalProfit || 0) >= 0
+                        ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`
+                        : Number(totalProfit || 0).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            ) : (
+              <p className="text-center text-gray-600">No data available</p>
+            )}
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              onConfirm={confirmDeleteRow}
+              message="Are you sure you want to delete this row?"
+            />
+          </div>
+          {/* Third Row: Stock Details Table */}
+          <>
+            <div className="flex flex-col sm:flex-row justify-between mb-4 space-y-4 sm:space-y-0 pt-6">
+              {/* Left Section: Holdings and Select */}
+              <div className="flex items-center space-x-4 flex-grow">
+                <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center">
+                  Day's history
+                  <span className="ml-1">({submittedData.length})</span>
+                  <SlArrowUp className="ml-2" />
+                </span>
+              </div>
+
+              {/* Right Section: Other elements */}
+              <div className="flex flex-wrap sm:flex-nowrap space-y-4 sm:space-y-0 space-x-6 items-center pr-6">
+                <div className="relative w-24">
+                  <MdOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 w-4 h-4 text-customGray" />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="border border-borderWhite text-xs text-center w-full h-7 pl-6" // Reduced padding from pl-8 to pl-6
+                  />
+                </div>
+
+                <span
+                  className="flex items-center space-x-1 text-xs text-coustomBlue cursor-pointer"
+                  onClick={toggleForm}
+                >
+                  <img
+                    src={download}
+                    alt="download"
+                    className="h-3 w-3 cursor-pointer "
+                  />
+                  <span className="leading-none text-xs font-normal">
+                    Download
+                  </span>
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
+                </span>
+                {showForm && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="p-4 max-w-4xl mx-auto border border-gray-300 rounded-lg shadow-md bg-white">
+                      <h2 className="text-xl font-bold text-gray-700 mb-3 text-center">
+                        {selectedRowId ? "Edit Position" : "Add New Position"}
+                      </h2>
+                      <form onSubmit={handleSubmit} className="space-y-3">
+<<<<<<< Updated upstream
+                        {/* Form fields */}
+                        {/* ... */}
+=======
+                        {/* Pickers in two columns */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Position
+                            </label>
+                            <select
+                              name="position"
+                              value={formData.position}
+                              onChange={handlePickerChange}
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="OPEN">OPEN</option>
+                              <option value="CLOSE">CLOSE</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Order Type
+                            </label>
+                            <select
+                              name="orderType"
+                              value={formData.orderType}
+                              onChange={handlePickerChange}
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="MIS">MIS</option>
+                              <option value="NRML">NRML</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Segment Type
+                            </label>
+                            <select
+                              name="marketType"
+                              value={formData.marketType}
+                              onChange={handlePickerChange}
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="EQ">EQ</option>
+                              <option value="NFO">NFO</option>
+                              <option value="BFO">BFO</option>
+                              <option value="MCX">MCX</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Action
+                            </label>
+                            <select
+                              name="action"
+                              value={formData.action}
+                              onChange={handlePickerChange}
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="BUY">BUY</option>
+                              <option value="SELL">SELL</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Expiry
+                            </label>
+                            <select
+                              name="expiryType"
+                              value={formData.expiryType}
+                              onChange={handlePickerChange}
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="Monthly">Monthly</option>
+                              <option value="Weekly">Weekly</option>
+                            </select>
+                          </div>
+                        </div>
+                        {/* Text Inputs in two columns */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Stock Name
+                            </label>
+                            <input
+                              type="text"
+                              name="stockName"
+                              value={formData.stockName}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Stock Name"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Date
+                            </label>
+                            <input
+                              type="text"
+                              name="date"
+                              value={formData.date}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Date"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              TH,RD,ND
+                            </label>
+                            <input
+                              type="text"
+                              name="thRdNd"
+                              value={formData.thRdNd}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter TH RD ND"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Strike Price
+                            </label>
+                            <input
+                              type="text"
+                              step="0.01"
+                              name="buyPrice"
+                              value={formData.buyPrice}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Buy Price"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Quantity
+                            </label>
+                            <input
+                              type="number"
+                              name="quantity"
+                              value={formData.quantity}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Quantity"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Average Price
+                            </label>
+                            <input
+                              type="number"
+                              name="averagePrice"
+                              value={formData.averagePrice}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Average Price"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Prev Close
+                            </label>
+                            <input
+                              type="number"
+                              name="prevClose"
+                              value={formData.prevClose}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Previous Close"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Min LTP
+                            </label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              name="minLTP"
+                              value={formData.minLTP}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Min LTP"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Max LTP
+                            </label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              name="maxLTP"
+                              value={formData.maxLTP}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Max LTP"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                              Sell Price
+                            </label>
+                            <input
+                              type="number"
+                              name="sellPrice"
+                              value={formData.sellPrice}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Enter Sell Price"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Buttons */}
+>>>>>>> Stashed changes
                         <div className="flex justify-between mt-3">
                           <button
                             type="submit"
@@ -1799,6 +2569,7 @@ const Position = () => {
                               : ""
                           }`}
                         >
+<<<<<<< Updated upstream
                           {row.orderType}
                         </span>
                       </td>
@@ -1824,16 +2595,75 @@ const Position = () => {
                                   {row.marketType}
                                 </span>
                               </span>
+=======
+<<<<<<< HEAD
+                          <span className="mx-1 text-labelGray tracking-wider">
+                            {  row.marketType === "NSE" &&
+                          (row.expiryType === "Monthly") &&
+                           row.position === "CLOSE" 
+                          ? (
+                          <>
+                            <span className="flex items-center whitespace-nowrap space-x-1">
+                              <span className="text-headingGray text-sm uppercase">
+                                {row.stockName}
+                              </span>
+                              <span className="text-secheadingGray text-xs mt-[1px] ">
+                                {row.marketType}
+                              </span>
+                            </span>
+                          </>
+                        ) : row.marketType === "NSE" && 
+                            (row.position === "OPEN") &&
+                             (row.expiryType === "Monthly"||"Weekly") ? (
+=======
+                          {row.orderType}
+                        </span>
+                      </td>
+
+                      {/* Stock Details */}
+                      <td
+                        className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
+                          row.position === "CLOSE"
+                            ? "!bg-rowDisable !text-disableText"
+                            : "text-customGray"
+                        }`}
+                      >
+                        <span className="mx-1 text-labelGray tracking-wider">
+                          {row.marketType === "EQ" &&
+                          row.expiryType === "Monthly" &&
+                          row.position === "CLOSE" ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-headingGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1 ">
+                                  {row.marketType}
+                                </span>
+                              </span>
+>>>>>>> Stashed changes
                             </>
                           ) : row.marketType === "EQ" &&
                             row.position === "OPEN" &&
                             (row.expiryType === "Monthly" || "Weekly") ? (
+<<<<<<< Updated upstream
+=======
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
                             <>
                               <span className="flex items-center whitespace-nowrap space-x-1">
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
+<<<<<<< Updated upstream
                                 <span className="text-marketGray text-xs mt-1">
+=======
+<<<<<<< HEAD
+                                <span className="text-marketGray text-xs mt-[1px]">
+=======
+                                <span className="text-marketGray text-xs mt-1">
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1846,6 +2676,15 @@ const Position = () => {
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+                              </>
+                            ) : row.marketType === "NSE" && 
+                            (row.position === "OPEN") &&
+                             (row.expiryType === "Monthly"||"Weekly") ? (
+=======
+>>>>>>> Stashed changes
                                 <span className="text-headingGray text-sm">
                                   {row.buyPrice}
                                 </span>
@@ -1857,16 +2696,44 @@ const Position = () => {
                           ) : row.marketType === "EQ" &&
                             row.position === "OPEN" &&
                             (row.expiryType === "Monthly" || "Weekly") ? (
+<<<<<<< Updated upstream
+=======
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
                             <>
                               <span className="flex items-center whitespace-nowrap space-x-1">
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
+<<<<<<< Updated upstream
                                 <span className="text-marketGray text-xs mt-1">
+=======
+<<<<<<< HEAD
+                                <span className="text-marketGray text-xs mt-[1px]">
+=======
+                                <span className="text-marketGray text-xs mt-1">
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
                                   {row.marketType}
                                 </span>
                               </span>
                             </>
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+                          ) : row.marketType === "NSE" &&
+                          (row.expiryType === "Weekly") &&
+                           row.position === "CLOSE" 
+                          ? (
+                          <>
+                            <span className="flex items-center whitespace-nowrap space-x-1">
+                              <span className="text-headingGray text-sm uppercase">
+                                {row.stockName}
+                              </span>
+                              <span className="text-secheadingGray text-xs mt-[1px]">
+                                {row.marketType}
+=======
+>>>>>>> Stashed changes
                           ) : row.marketType === "EQ" &&
                             row.expiryType === "Weekly" &&
                             row.position === "CLOSE" ? (
@@ -1874,10 +2741,79 @@ const Position = () => {
                               <span className="flex items-center whitespace-nowrap space-x-1">
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
+<<<<<<< Updated upstream
+=======
                                 </span>
                                 <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
+                              </span>
+                            </>
+                          ) : row.position === "OPEN" &&
+                            row.expiryType === "Weekly" &&
+                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.date}
+                                  <sup className="text-xms text-customGray">
+                                    {row.thRdNd}
+                                  </sup>
+                                </span>
+                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                    W
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+                              </span>
+                            </span>
+                          </>
+                        ) : row.position === "OPEN" &&
+                              row.expiryType === "Weekly" &&
+                              (row.marketType === "NFO"||"MCX"||"BFO")  ? (
+                              <>
+                                <span className="flex items-center whitespace-nowrap space-x-1">
+                                  <span className="text-customGray text-sm uppercase">
+                                    {row.stockName}
+                                  </span>
+                                  <span className="text-sm text-customGray">
+                                    {row.date}
+                                    <sup className="text-xms text-customGray">
+                                      {row.thRdNd}
+                                    </sup>
+                                  </span>
+                                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                      W
+                                    </span>
+                                  </span>
+                                  <span className="text-sm text-customGray">
+                                    {row.buyPrice}
+                                  </span>
+                                  <span className="text-marketGray text-xs mt-[1px]">
+                                    {row.marketType}
+                                  </span>
+>>>>>>> Stashed changes
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+<<<<<<< Updated upstream
                               </span>
                             </>
                           ) : row.position === "OPEN" &&
@@ -1926,6 +2862,12 @@ const Position = () => {
                                     {row.thRdNd}
                                   </sup>
                                 </span>
+=======
+<<<<<<< HEAD
+                              </>
+                            ) : row.position === "OPEN" &&
+=======
+>>>>>>> Stashed changes
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
                                   {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
                                     W
@@ -1945,6 +2887,10 @@ const Position = () => {
                               </span>
                             </>
                           ) : row.position === "OPEN" &&
+<<<<<<< Updated upstream
+=======
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
                             row.expiryType === "Monthly" &&
                             (row.marketType === "MCX" || "BFO" || "NFO") ? (
                             <>
@@ -1955,7 +2901,15 @@ const Position = () => {
                                 <span className="text-customGray text-sm">
                                   {row.buyPrice}
                                 </span>
+<<<<<<< Updated upstream
                                 <span className="text-marketGray text-xs mt-1">
+=======
+<<<<<<< HEAD
+                                <span className="text-marketGray text-xs mt-[1px]">
+=======
+                                <span className="text-marketGray text-xs mt-1">
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1966,6 +2920,15 @@ const Position = () => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+                              </>
+                            )}
+                          </span>
+                        </td>
+=======
+>>>>>>> Stashed changes
                                 <span className="text-sm text-customGray">
                                   {row.date}
                                   <sup className="text-xms text-customGray">
@@ -1993,6 +2956,10 @@ const Position = () => {
                           )}
                         </span>
                       </td>
+<<<<<<< Updated upstream
+=======
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
 
                       {/* Additional Columns (Action, Buy Price, etc.) */}
                       <td
@@ -2178,6 +3145,11 @@ const Position = () => {
                       />
                     )}
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
                     {/* Labels for positive P&L */}
                     {(item.action === "SELL" ? item.profitClose : item.profit) >
                       0 && (
@@ -2298,6 +3270,10 @@ const Position = () => {
                 </div>
               ))}
           </div>
+<<<<<<< Updated upstream
+=======
+>>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
+>>>>>>> Stashed changes
         </div>
       </div>
     </div>

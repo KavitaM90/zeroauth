@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+//import { CiBellOn } from "react-icons/ci";
 import { Link, useLocation } from "react-router-dom";
 import { useMarketData } from "../custom/useMarketData";
 import arrow from "../assets/arrow.jpg";
@@ -12,10 +13,15 @@ const Nav = ({ onLogout }) => {
   const currentPath = location.pathname;
 
   return (
-    // Removed 'overflow-hidden' from the nav element to allow dropdown to show
+// <<<<<<< Updated upstream
+//     // Removed 'overflow-hidden' from the nav element to allow dropdown to show
+//     <nav className="fixed top-0 left-0 w-full bg-bgWhite p-0 shadow-md z-50 flex items-center h-12">
+//       {/* Left Section: NIFTY and SENSEX */}
+//       <div className="flex-[1_1_33.33%] flex items-center font-sans justify-between border-r border-borderGray px-2 h-full">
+// =======
     <nav className="fixed top-0 left-0 w-full bg-bgWhite p-0 shadow-md z-50 flex items-center h-12">
       {/* Left Section: NIFTY and SENSEX */}
-      <div className="flex-[1_1_33.33%] flex items-center font-sans justify-between border-r border-borderGray px-2 h-full">
+      <div className="flex-[1_1_33.33%] flex items-center justify-between border-r border-borderGray px-2 h-full">
         <div className="flex space-x-4 ">
           {/* Nifty Section */}
           <div className="text-customGray text-xm font-normal">
@@ -23,7 +29,7 @@ const Nav = ({ onLogout }) => {
               ? String(marketData["nifty50"]).toUpperCase()
               : ""}
 
-            <span
+            {/* <span
               className={`ml-1 text-xm font-normal ${
                 marketData?.["nifty-prev-close"] > marketData?.["niftyLTP"]
                   ? "text-lossRed"
@@ -32,12 +38,16 @@ const Nav = ({ onLogout }) => {
             >
               {marketData?.["niftyLTP"] !== undefined &&
               marketData["niftyLTP"] !== null
+======= */}
+            <span className="text-textGreen ml-1 text-xm font-normal">
+              {marketData?.["niftyLTP"] !== undefined && marketData["niftyLTP"] !== null
                 ? parseFloat(marketData["niftyLTP"]).toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })
                 : ""}
             </span>
+{/* <<<<<<< Updated upstream
 
             <span className="text-text2Gray ml-1 text-xs font-normal">
               {marketData?.["niftyDiff"] !== undefined &&
@@ -54,6 +64,19 @@ const Nav = ({ onLogout }) => {
                     (
                     {parseFloat(marketData["niftyPercentageChange"]).toFixed(2)}
                     %)
+======= */}
+            <span className="text-text2Gray ml-1 text-xs font-normal">
+              {marketData?.["niftyDiff"] !== undefined && marketData["niftyDiff"] !== null
+                ? parseFloat(marketData["niftyDiff"]).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
+
+              {marketData?.["niftyPercentageChange"] !== undefined &&
+                marketData["niftyPercentageChange"] !== null && (
+                  <span className="ml-[2px]">
+                    ({parseFloat(marketData["niftyPercentageChange"]).toFixed(2)}%)
                   </span>
                 )}
             </span>
@@ -65,6 +88,7 @@ const Nav = ({ onLogout }) => {
               ? String(marketData["sensex"]).toUpperCase()
               : ""}
 
+{/* <<<<<<< Updated upstream
             <span
               className={`ml-1 text-xm font-normal ${
                 marketData?.["sensex-prev-close"] > marketData?.["sensexLTP"]
@@ -74,16 +98,23 @@ const Nav = ({ onLogout }) => {
             >
               {marketData?.["sensexLTP"] !== undefined &&
               marketData["sensexLTP"] !== null
+======= */}
+            <span className="text-textGreen ml-1 text-xm font-normal">
+              {marketData?.["sensexLTP"] !== undefined && marketData["sensexLTP"] !== null
                 ? parseFloat(marketData["sensexLTP"]).toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })
                 : ""}
             </span>
+{/* <<<<<<< Updated upstream
 
             <span className="text-text2Gray ml-1 text-xs font-normal">
               {marketData?.["sensexDiff"] !== undefined &&
               marketData["sensexDiff"] !== null
+======= */}
+            <span className="text-text2Gray ml-1 text-xs font-normal">
+              {marketData?.["sensexDiff"] !== undefined && marketData["sensexDiff"] !== null
                 ? parseFloat(marketData["sensexDiff"]).toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
@@ -93,11 +124,14 @@ const Nav = ({ onLogout }) => {
               {marketData?.["sensexPercentageChange"] !== undefined &&
                 marketData["sensexPercentageChange"] !== null && (
                   <span className="ml-[2px]">
+{/* <<<<<<< Updated upstream
                     (
                     {parseFloat(marketData["sensexPercentageChange"]).toFixed(
                       2
                     )}
                     %)
+======= */}
+                    ({parseFloat(marketData["sensexPercentageChange"]).toFixed(2)}%)
                   </span>
                 )}
             </span>
@@ -130,10 +164,15 @@ const Nav = ({ onLogout }) => {
           </svg>
         </button>
       </div>
-
+{/* 
+<<<<<<< Updated upstream
       {/* Right Section: Navigation Links */}
-      <div className="hidden sm:flex flex-[2_1_66.66%] items-stretch justify-between px-4 h-full">
+      {/* <div className="hidden sm:flex flex-[2_1_66.66%] items-stretch justify-between px-4 h-full"> */}
         {/* Left: Icon */}
+
+      {/* Right Section: Navigation Links and User Info */}
+      <div className="hidden sm:flex flex-[2_1_66.66%] items-stretch justify-between px-4 h-full">
+        {/* Left: Icon (Using BiSolidTagAlt as it was imported) */}
         <div className="flex items-center">
           <img
             alt="icon"
@@ -164,7 +203,6 @@ const Nav = ({ onLogout }) => {
               </Link>
             ))}
           </div>
-
           {/* Vertical Line */}
           <div className="h-full border-l border-borderGray"></div>
 
@@ -181,6 +219,8 @@ const Nav = ({ onLogout }) => {
             alt="bell"
             className="h-4 w-4 cursor-pointer text-customGray"
           />
+          {/* Bell Icon (Using CiBellOn as it was imported) */}
+          {/* <CiBellOn className="h-6 w-6 cursor-pointer text-customGray" /> */}
 
           {/* User Info with Logout Dropdown */}
           <div className="relative">
