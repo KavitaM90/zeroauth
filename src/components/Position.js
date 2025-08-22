@@ -180,16 +180,8 @@ const Position = () => {
     position: "OPEN",
     action: "BUY",
     orderType: "MIS",
-<<<<<<< Updated upstream
-    marketType: "EQ",
-=======
-<<<<<<< HEAD
     holdingStatus: "",
-    marketType: "NSE",
-=======
     marketType: "EQ",
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
     expiryType: "Monthly",
     stockName: "",
     buyPrice: "",
@@ -251,16 +243,8 @@ const Position = () => {
       position: "OPEN",
       action: "BUY",
       orderType: "MIS",
-<<<<<<< Updated upstream
       marketType: "EQ",
-=======
-<<<<<<< HEAD
-      marketType: "NSE",
       holdingStatus: "",
-=======
-      marketType: "EQ",
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
       expiryType: "Monthly",
       stockName: "",
       buyPrice: "",
@@ -976,13 +960,7 @@ const Position = () => {
                   className="flex items-center space-x-1 text-xs text-coustomBlue cursor-pointer"
                   onClick={toggleForm}
                 >
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-                  <MdOutlineFileDownload className="h-4 w-4" />
-                  <span className="leading-none">Download</span>
-=======
->>>>>>> Stashed changes
+
                   <img
                     src={download}
                     alt="download"
@@ -991,8 +969,6 @@ const Position = () => {
                   <span className="leading-none text-xs font-normal">
                     Download
                   </span>
-<<<<<<< Updated upstream
-=======
                 </span>
                 {showForm && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -1508,8 +1484,6 @@ const Position = () => {
                   <span className="leading-none text-xs font-normal">
                     Download
                   </span>
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
                 </span>
                 {showForm && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -1518,10 +1492,6 @@ const Position = () => {
                         {selectedRowId ? "Edit Position" : "Add New Position"}
                       </h2>
                       <form onSubmit={handleSubmit} className="space-y-3">
-<<<<<<< Updated upstream
-                        {/* Form fields */}
-                        {/* ... */}
-=======
                         {/* Pickers in two columns */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
@@ -1745,7 +1715,6 @@ const Position = () => {
                         </div>
 
                         {/* Buttons */}
->>>>>>> Stashed changes
                         <div className="flex justify-between mt-3">
                           <button
                             type="submit"
@@ -2506,597 +2475,360 @@ const Position = () => {
           </>
           <div className="overflow-hidden">
             {submittedData.length > 0 ? (
-              <table className=" table-fixed w-full">
-                <thead>
-                  <tr className="text-customGray text-xm font-openSans font-normal leading-4 border-t">
-                    {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
-                    <th className="p-4 text-start font-openSans text-headingGray font-normal w-24 h-11">
-                      Product
-                    </th>
-                    <th className="p-4 text-headingGray text-start font-openSans font-normal w-40 h-11">
-                      Instrument
-                    </th>
-                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
-                      Qty.
-                    </th>
-                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
-                      Avg.
-                    </th>
-                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
-                      LTP
-                    </th>
-                    <th className="p-4 text-end font-openSans font-normal text-headingGray bg-slate-50 w-24 h-11">
-                      P&L
-                    </th>
-                    <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
-                      Chg.
-                    </th>
-                    <th className="w-2 h-11"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mergedData.map((row) => (
-                    <tr
-                      key={row.id}
-                      onClick={() => handleRowClick(row.id)}
-                      className={`border-t shadow-sm shadow-gray-100 font-sans ${
-                        row.position === "CLOSE"
-                          ? "bg-rowDisable !text-disableText"
-                          : ""
-                      }`}
-                    >
-                      {/* Checkbox */}
-                      {/* <td className="p-4 text-center">
-                          <input
-            type="checkbox"
-            checked={isRowSelected(index)}
-            onChange={() => handleRowSelect(index)}
-          />
-                        </td> */}
+             <table className=" table-fixed w-full">
+    <thead>
+      <tr className="text-customGray text-xm font-openSans font-normal leading-4 border-t">
+        {/* <th className="p-4 text-start font-sans text-headingGray font-normal h-11"></th> */}
+        <th className="p-4 text-start font-openSans text-headingGray font-normal w-24 h-11">
+          Product
+        </th>
+        <th className="p-4 text-headingGray text-start font-openSans font-normal w-40 h-11">
+          Instrument
+        </th>
+        <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+          Qty.
+        </th>
+        <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+          Avg.
+        </th>
+        <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+          LTP
+        </th>
+        <th className="p-4 text-end font-openSans font-normal text-headingGray bg-slate-50 w-24 h-11">
+          P&L
+        </th>
+        <th className="p-4 text-end font-openSans font-normal text-headingGray w-20 h-11">
+          Chg.
+        </th>
+        <th className="w-2 h-11"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {mergedData.map((row, index) => (
+        <tr
+          key={row.id}
+          onClick={() => handleRowClick(row.id)}
+          className={`border-t shadow-sm shadow-gray-100 font-sans ${
+            row.position === "CLOSE" ? "bg-rowDisable !text-disableText" : ""
+          }`}
+        >
+          {/* Checkbox */}
+          {/* <td className="p-4 text-center">
+                <input
+                  type="checkbox"
+                  checked={isRowSelected(index)}
+                  onChange={() => handleRowSelect(index)}
+                />
+              </td> */}
 
-                      {/* Order Type */}
-                      <td className="p-4 text-cellGray text-xs font-sans font-normal text-center">
-                        <span
-                          className={`h-5 w-12 flex justify-center items-center -ml-1 ${
-                            row.position === "CLOSE" &&
-                            (row.expiryType === "Weekly" ||
-                              row.expiryType === "Monthly")
-                              ? "!bg-bgOff !text-disableText"
-                              : row.orderType === "MIS"
-                              ? "bg-productBg text-textProduct"
-                              : row.orderType === "NRML"
-                              ? "bg-purple-100 text-purple-800"
-                              : ""
-                          }`}
-                        >
-<<<<<<< Updated upstream
-                          {row.orderType}
-                        </span>
-                      </td>
+          {/* Order Type */}
+          <td className="p-4 text-cellGray text-xs font-sans font-normal text-center">
+            <span
+              className={`h-5 w-12 flex justify-center items-center -ml-1 ${
+                row.position === "CLOSE" &&
+                (row.expiryType === "Weekly" || row.expiryType === "Monthly")
+                  ? "!bg-bgOff !text-disableText"
+                  : row.orderType === "MIS"
+                  ? "bg-productBg text-textProduct"
+                  : row.orderType === "NRML"
+                  ? "bg-purple-100 text-purple-800"
+                  : ""
+              }`}
+            >
+              {row.orderType}
+            </span>
+          </td>
 
-                      {/* Stock Details */}
-                      <td
-                        className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
-                          row.position === "CLOSE"
-                            ? "!bg-rowDisable !text-disableText"
-                            : "text-customGray"
-                        }`}
-                      >
-                        <span className="mx-1 text-labelGray tracking-wider">
-                          {row.marketType === "EQ" &&
-                          row.expiryType === "Monthly" &&
-                          row.position === "CLOSE" ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-headingGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-secheadingGray text-xs mt-1 ">
-                                  {row.marketType}
-                                </span>
-                              </span>
-=======
-<<<<<<< HEAD
-                          <span className="mx-1 text-labelGray tracking-wider">
-                            {  row.marketType === "NSE" &&
-                          (row.expiryType === "Monthly") &&
-                           row.position === "CLOSE" 
-                          ? (
-                          <>
-                            <span className="flex items-center whitespace-nowrap space-x-1">
-                              <span className="text-headingGray text-sm uppercase">
-                                {row.stockName}
-                              </span>
-                              <span className="text-secheadingGray text-xs mt-[1px] ">
-                                {row.marketType}
-                              </span>
-                            </span>
-                          </>
-                        ) : row.marketType === "NSE" && 
-                            (row.position === "OPEN") &&
-                             (row.expiryType === "Monthly"||"Weekly") ? (
-=======
-                          {row.orderType}
-                        </span>
-                      </td>
+          {/* Stock Details */}
+          <td
+            className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
+              row.position === "CLOSE"
+                ? "!bg-rowDisable !text-disableText"
+                : "text-customGray"
+            }`}
+          >
+            <span className="mx-1 text-labelGray tracking-wider">
+              {row.marketType === "EQ" &&
+              row.expiryType === "Monthly" &&
+              row.position === "CLOSE" ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-headingGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                    <span className="text-secheadingGray text-xs mt-1 ">
+                      {row.marketType}
+                    </span>
+                  </span>
+                </>
+              ) : row.marketType === "EQ" &&
+                row.position === "OPEN" &&
+                (row.expiryType === "Monthly" || "Weekly") ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-customGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
 
-                      {/* Stock Details */}
-                      <td
-                        className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
-                          row.position === "CLOSE"
-                            ? "!bg-rowDisable !text-disableText"
-                            : "text-customGray"
-                        }`}
-                      >
-                        <span className="mx-1 text-labelGray tracking-wider">
-                          {row.marketType === "EQ" &&
-                          row.expiryType === "Monthly" &&
-                          row.position === "CLOSE" ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-headingGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-secheadingGray text-xs mt-1 ">
-                                  {row.marketType}
-                                </span>
-                              </span>
->>>>>>> Stashed changes
-                            </>
-                          ) : row.marketType === "EQ" &&
-                            row.position === "OPEN" &&
-                            (row.expiryType === "Monthly" || "Weekly") ? (
-<<<<<<< Updated upstream
-=======
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-<<<<<<< Updated upstream
-                                <span className="text-marketGray text-xs mt-1">
-=======
-<<<<<<< HEAD
-                                <span className="text-marketGray text-xs mt-[1px]">
-=======
-                                <span className="text-marketGray text-xs mt-1">
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : (row.marketType === "NFO" || "BFO" || "MCX") &&
-                            row.position === "CLOSE" &&
-                            row.expiryType === "Monthly" ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-headingGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-                              </>
-                            ) : row.marketType === "NSE" && 
-                            (row.position === "OPEN") &&
-                             (row.expiryType === "Monthly"||"Weekly") ? (
-=======
->>>>>>> Stashed changes
-                                <span className="text-headingGray text-sm">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-secheadingGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : row.marketType === "EQ" &&
-                            row.position === "OPEN" &&
-                            (row.expiryType === "Monthly" || "Weekly") ? (
-<<<<<<< Updated upstream
-=======
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-<<<<<<< Updated upstream
-                                <span className="text-marketGray text-xs mt-1">
-=======
-<<<<<<< HEAD
-                                <span className="text-marketGray text-xs mt-[1px]">
-=======
-                                <span className="text-marketGray text-xs mt-1">
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-                          ) : row.marketType === "NSE" &&
-                          (row.expiryType === "Weekly") &&
-                           row.position === "CLOSE" 
-                          ? (
-                          <>
-                            <span className="flex items-center whitespace-nowrap space-x-1">
-                              <span className="text-headingGray text-sm uppercase">
-                                {row.stockName}
-                              </span>
-                              <span className="text-secheadingGray text-xs mt-[1px]">
-                                {row.marketType}
-=======
->>>>>>> Stashed changes
-                          ) : row.marketType === "EQ" &&
-                            row.expiryType === "Weekly" &&
-                            row.position === "CLOSE" ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-headingGray text-sm uppercase">
-                                  {row.stockName}
-<<<<<<< Updated upstream
-=======
-                                </span>
-                                <span className="text-secheadingGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : row.position === "OPEN" &&
-                            row.expiryType === "Weekly" &&
-                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.date}
-                                  <sup className="text-xms text-customGray">
-                                    {row.thRdNd}
-                                  </sup>
-                                </span>
-                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                                    W
-                                  </span> */}
-                                  <img
-                                    src={w}
-                                    alt="w"
-                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
-                                  />
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-marketGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
-                              </span>
-                            </span>
-                          </>
-                        ) : row.position === "OPEN" &&
-                              row.expiryType === "Weekly" &&
-                              (row.marketType === "NFO"||"MCX"||"BFO")  ? (
-                              <>
-                                <span className="flex items-center whitespace-nowrap space-x-1">
-                                  <span className="text-customGray text-sm uppercase">
-                                    {row.stockName}
-                                  </span>
-                                  <span className="text-sm text-customGray">
-                                    {row.date}
-                                    <sup className="text-xms text-customGray">
-                                      {row.thRdNd}
-                                    </sup>
-                                  </span>
-                                  <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                    <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                                      W
-                                    </span>
-                                  </span>
-                                  <span className="text-sm text-customGray">
-                                    {row.buyPrice}
-                                  </span>
-                                  <span className="text-marketGray text-xs mt-[1px]">
-                                    {row.marketType}
-                                  </span>
->>>>>>> Stashed changes
-                                </span>
-                                <span className="text-secheadingGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-<<<<<<< Updated upstream
-                              </span>
-                            </>
-                          ) : row.position === "OPEN" &&
-                            row.expiryType === "Weekly" &&
-                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.date}
-                                  <sup className="text-xms text-customGray">
-                                    {row.thRdNd}
-                                  </sup>
-                                </span>
-                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                                    W
-                                  </span> */}
-                                  <img
-                                    src={w}
-                                    alt="w"
-                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
-                                  />
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-marketGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : row.position === "CLOSE" &&
-                            row.expiryType === "Weekly" &&
-                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-headingGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-sm text-headingGray">
-                                  {row.date}
-                                  <sup className="text-xms text-headingGray">
-                                    {row.thRdNd}
-                                  </sup>
-                                </span>
-=======
-<<<<<<< HEAD
-                              </>
-                            ) : row.position === "OPEN" &&
-=======
->>>>>>> Stashed changes
-                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                                    W
-                                  </span> */}
-                                  <img
-                                    src={w}
-                                    alt="w"
-                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
-                                  />
-                                </span>
-                                <span className="text-sm text-headingGray">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-secheadingGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : row.position === "OPEN" &&
-<<<<<<< Updated upstream
-=======
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-                            row.expiryType === "Monthly" &&
-                            (row.marketType === "MCX" || "BFO" || "NFO") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-customGray text-sm">
-                                  {row.buyPrice}
-                                </span>
-<<<<<<< Updated upstream
-                                <span className="text-marketGray text-xs mt-1">
-=======
-<<<<<<< HEAD
-                                <span className="text-marketGray text-xs mt-[1px]">
-=======
-                                <span className="text-marketGray text-xs mt-1">
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-                              </>
-                            )}
-                          </span>
-                        </td>
-=======
->>>>>>> Stashed changes
-                                <span className="text-sm text-customGray">
-                                  {row.date}
-                                  <sup className="text-xms text-customGray">
-                                    {row.thRdNd}
-                                  </sup>
-                                </span>
-                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                                    W
-                                  </span> */}
-                                  <img
-                                    src={w}
-                                    alt="w"
-                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
-                                  />
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-marketGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          )}
-                        </span>
-                      </td>
-<<<<<<< Updated upstream
-=======
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
-
-                      {/* Additional Columns (Action, Buy Price, etc.) */}
-                      <td
-                        className={`p-4 text-sm font-normal font-sans text-end ${
-                          row.position === "CLOSE"
-                            ? "!bg-rowDisable !text-disableText"
-                            : row.action === "BUY"
-                            ? "text-scaleBlue"
-                            : row.action === "SELL"
-                            ? "text-stockRed"
-                            : "text-stockDefault"
-                        }`}
-                      >
-                        {row.position === "CLOSE"
-                          ? "0"
-                          : `${row.action === "SELL" ? "-" : ""}${Math.abs(
-                              parseFloat(row.quantity || 0)
-                            ).toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}`}
-                      </td>
-                      {/* Conditional rendering for averagePrice */}
-                      <td
-                        className={`p-4 text-cellGray font-sans text-sm font-normal
+                    <span className="text-marketGray text-xs mt-1">
+                      {row.marketType}
+                    </span>
+                  </span>
+                </>
+              ) : (row.marketType === "NFO" || "BFO" || "MCX") &&
+                row.position === "CLOSE" &&
+                row.expiryType === "Monthly" ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-headingGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                  </span>
+                </>
+              ) : row.marketType === "EQ" &&
+                row.expiryType === "Weekly" &&
+                row.position === "CLOSE" ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-headingGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                    <span className="text-secheadingGray text-xs mt-1">
+                      {row.marketType}
+                    </span>
+                  </span>
+                </>
+              ) : row.position === "OPEN" &&
+                row.expiryType === "Weekly" &&
+                (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-customGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                    <span className="text-sm text-customGray">
+                      {row.date}
+                      <sup className="text-xms text-customGray">
+                        {row.thRdNd}
+                      </sup>
+                    </span>
+                    <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                      {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                          W
+                        </span> */}
+                      <img
+                        src={w}
+                        alt="w"
+                        className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                      />
+                    </span>
+                    <span className="text-sm text-customGray">
+                      {row.buyPrice}
+                    </span>
+                    <span className="text-marketGray text-xs mt-1">
+                      {row.marketType}
+                    </span>
+                  </span>
+                </>
+              ) : row.position === "OPEN" &&
+                row.expiryType === "Weekly" &&
+                (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-customGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                    <span className="text-sm text-customGray">
+                      {row.date}
+                      <sup className="text-xms text-customGray">
+                        {row.thRdNd}
+                      </sup>
+                    </span>
+                    <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                      {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                          W
+                        </span> */}
+                      <img
+                        src={w}
+                        alt="w"
+                        className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                      />
+                    </span>
+                    <span className="text-sm text-customGray">
+                      {row.buyPrice}
+                    </span>
+                    <span className="text-marketGray text-xs mt-1">
+                      {row.marketType}
+                    </span>
+                  </span>
+                </>
+              ) : row.position === "CLOSE" &&
+                row.expiryType === "Weekly" &&
+                (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-headingGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                    <span className="text-sm text-headingGray">
+                      {row.date}
+                      <sup className="text-xms text-headingGray">
+                        {row.thRdNd}
+                      </sup>
+                    </span>
+                  </span>
+                </>
+              ) : row.position === "OPEN" &&
+                (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-customGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                    <span className="text-sm text-customGray">
+                      {row.buyPrice}
+                    </span>
+                    <span className="text-marketGray text-xs mt-1">
+                      {row.marketType}
+                    </span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="flex items-center whitespace-nowrap space-x-1">
+                    <span className="text-customGray text-sm uppercase">
+                      {row.stockName}
+                    </span>
+                  </span>
+                </>
+              )}
+            </span>
+          </td>
+          {/* Qty */}
+          <td
+            className={`p-4 text-sm font-normal font-sans text-end ${
+              row.position === "CLOSE"
+                ? "!bg-rowDisable !text-disableText"
+                : row.action === "BUY"
+                ? "text-scaleBlue"
+                : row.action === "SELL"
+                ? "text-stockRed"
+                : "text-stockDefault"
+            }`}
+          >
+            {row.position === "CLOSE"
+              ? "0"
+              : `${row.action === "SELL" ? "-" : ""}${Math.abs(
+                  parseFloat(row.quantity || 0)
+                ).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`}
+          </td>
+          {/* Conditional rendering for averagePrice */}
+          <td
+            className={`p-4 text-cellGray font-sans text-sm font-normal
                              text-end ${
                                row.position === "CLOSE"
                                  ? "!bg-rowDisable !text-disableText"
                                  : ""
                              }`}
-                      >
-                        {row.position === "CLOSE"
-                          ? "0.00"
-                          : parseFloat(row.averagePrice || 0).toLocaleString(
-                              "en-IN",
-                              {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }
-                            )}
-                      </td>
-                      {/* Conditional rendering for LTP */}
-                      <td
-                        className={`p-4 text-cellGray font-sans text-sm font-normal text-end ${
-                          row.position === "CLOSE"
-                            ? "!bg-rowDisable !text-disableText"
-                            : ""
-                        }`}
-                      >
-                        {parseFloat(row.ltp || 0) >= 0 ? "" : ""}
-                        {parseFloat(row.ltp || 0).toLocaleString("en-IN", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </td>
-                      <td
-                        className={`p-4 text-sm font-normal font-sans text-end ${
-                          row.position === "CLOSE"
-                            ? "!bg-rowDisable !text-disableText"
-                            : parseFloat(row.profit || 0) >= 0
-                            ? "bg-slate-50 text-textGreen"
-                            : "bg-slate-50 text-stockRed"
-                        }`}
-                      >
-                        {row.position === "CLOSE"
-                          ? parseFloat(row.profitClose || 0) >= 0
-                            ? "+"
-                            : ""
-                          : parseFloat(row.profit || 0) >= 0
-                          ? "+"
-                          : ""}
-                        {row.position === "CLOSE"
-                          ? parseFloat(row.profitClose || 0).toLocaleString(
-                              "en-IN",
-                              {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }
-                            )
-                          : parseFloat(row.profit || 0).toLocaleString(
-                              "en-IN",
-                              {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }
-                            )}
-                      </td>
+          >
+            {row.position === "CLOSE"
+              ? "0.00"
+              : parseFloat(row.averagePrice || 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+          </td>
+          {/* Conditional rendering for LTP */}
+          <td
+            className={`p-4 text-cellGray font-sans text-sm font-normal text-end ${
+              row.position === "CLOSE"
+                ? "!bg-rowDisable !text-disableText"
+                : ""
+            }`}
+          >
+            {parseFloat(row.ltp || 0) >= 0 ? "" : ""}
+            {parseFloat(row.ltp || 0).toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </td>
+          <td
+            className={`p-4 text-sm font-normal font-sans text-end ${
+              row.position === "CLOSE"
+                ? "!bg-rowDisable !text-disableText"
+                : parseFloat(row.profit || 0) >= 0
+                ? "bg-slate-50 text-textGreen"
+                : "bg-slate-50 text-stockRed"
+            }`}
+          >
+            {row.position === "CLOSE"
+              ? parseFloat(row.profitClose || 0) >= 0
+                ? "+"
+                : ""
+              : parseFloat(row.profit || 0) >= 0
+              ? "+"
+              : ""}
+            {row.position === "CLOSE"
+              ? parseFloat(row.profitClose || 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              : parseFloat(row.profit || 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+          </td>
 
-                      <td
-                        className={`p-4 text-xs font-normal font-sans text-end ${
-                          row.position === "CLOSE"
-                            ? "!bg-rowDisable !text-disableText"
-                            : parseFloat(row.percentageChange || 0) >= 0
-                            ? "text-textGreen"
-                            : "text-stockRed"
-                        }`}
-                      >
-                        {row.position === "CLOSE"
-                          ? "0.00%"
-                          : `${parseFloat(row.percentageChange || 0).toFixed(
-                              2
-                            )}%`}
-                      </td>
-                      <td className="text-headingGray">
-                        <PiDotsThreeVerticalThin
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditClick(row);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+          <td
+            className={`p-4 text-xs font-normal font-sans text-end ${
+              row.position === "CLOSE"
+                ? "!bg-rowDisable !text-disableText"
+                : parseFloat(row.percentageChange || 0) >= 0
+                ? "text-textGreen"
+                : "text-stockRed"
+            }`}
+          >
+            {row.position === "CLOSE"
+              ? "0.00%"
+              : `${parseFloat(row.percentageChange || 0).toFixed(2)}%`}
+          </td>
+          <td className="text-headingGray">
+            <PiDotsThreeVerticalThin
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditClick(row);
+              }}
+            />
+          </td>
+        </tr>
+      ))}
+    </tbody>
 
-                <tfoot>
-                  <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
-                    <td colSpan="4" className="p-4"></td>
-                    <td className="p-4 text-end">Total P&L</td>
-                    <td
-                      className={`p-4 text-sm font-normal text-end text-wrap truncate
+    <tfoot>
+      <tr className="border-t text-customGray text-sm font-sans font-normal leading-4">
+        <td colSpan="4" className="p-4"></td>
+        <td className="p-4 text-end">Total P&L</td>
+        <td
+          className={`p-4 text-sm font-normal text-end text-wrap truncate
     ${parseFloat(totalProfit || 0) >= 0 ? "text-textGreen" : "text-stockRed"}`}
-                    >
-                      {parseFloat(totalProfit || 0) >= 0
-                        ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}`
-                        : Number(totalProfit || 0).toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                    </td>
-                    <td className="p-4"></td>
-                  </tr>
-                </tfoot>
-              </table>
+        >
+          {parseFloat(totalProfit || 0) >= 0
+            ? `+${Number(totalProfit || 0).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : Number(totalProfit || 0).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+        </td>
+        <td className="p-4"></td>
+      </tr>
+    </tfoot>
+  </table>
             ) : (
               <p className="text-center text-gray-600">No data available</p>
             )}{" "}
@@ -3144,12 +2876,6 @@ const Position = () => {
                         }}
                       />
                     )}
-
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
                     {/* Labels for positive P&L */}
                     {(item.action === "SELL" ? item.profitClose : item.profit) >
                       0 && (
@@ -3270,10 +2996,6 @@ const Position = () => {
                 </div>
               ))}
           </div>
-<<<<<<< Updated upstream
-=======
->>>>>>> fda6ae2 (single login functionality few changes in position page and styling related changes)
->>>>>>> Stashed changes
         </div>
       </div>
     </div>
