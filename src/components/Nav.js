@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-//import { CiBellOn } from "react-icons/ci";
 import { Link, useLocation } from "react-router-dom";
 import { useMarketData } from "../custom/useMarketData";
 import arrow from "../assets/arrow.jpg";
@@ -13,12 +12,6 @@ const Nav = ({ onLogout }) => {
   const currentPath = location.pathname;
 
   return (
-// <<<<<<< Updated upstream
-//     // Removed 'overflow-hidden' from the nav element to allow dropdown to show
-//     <nav className="fixed top-0 left-0 w-full bg-bgWhite p-0 shadow-md z-50 flex items-center h-12">
-//       {/* Left Section: NIFTY and SENSEX */}
-//       <div className="flex-[1_1_33.33%] flex items-center font-sans justify-between border-r border-borderGray px-2 h-full">
-// =======
     <nav className="fixed top-0 left-0 w-full bg-bgWhite p-0 shadow-md z-50 flex items-center h-12">
       {/* Left Section: NIFTY and SENSEX */}
       <div className="flex-[1_1_33.33%] flex items-center justify-between border-r border-borderGray px-2 h-full">
@@ -47,24 +40,7 @@ const Nav = ({ onLogout }) => {
                   })
                 : ""}
             </span>
-{/* <<<<<<< Updated upstream
 
-            <span className="text-text2Gray ml-1 text-xs font-normal">
-              {marketData?.["niftyDiff"] !== undefined &&
-              marketData["niftyDiff"] !== null
-                ? parseFloat(marketData["niftyDiff"]).toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                : ""}
-
-              {marketData?.["niftyPercentageChange"] !== undefined &&
-                marketData["niftyPercentageChange"] !== null && (
-                  <span className="ml-[2px]">
-                    (
-                    {parseFloat(marketData["niftyPercentageChange"]).toFixed(2)}
-                    %)
-======= */}
             <span className="text-text2Gray ml-1 text-xs font-normal">
               {marketData?.["niftyDiff"] !== undefined && marketData["niftyDiff"] !== null
                 ? parseFloat(marketData["niftyDiff"]).toLocaleString("en-IN", {
@@ -124,13 +100,6 @@ const Nav = ({ onLogout }) => {
               {marketData?.["sensexPercentageChange"] !== undefined &&
                 marketData["sensexPercentageChange"] !== null && (
                   <span className="ml-[2px]">
-{/* <<<<<<< Updated upstream
-                    (
-                    {parseFloat(marketData["sensexPercentageChange"]).toFixed(
-                      2
-                    )}
-                    %)
-======= */}
                     ({parseFloat(marketData["sensexPercentageChange"]).toFixed(2)}%)
                   </span>
                 )}
