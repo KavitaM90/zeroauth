@@ -1830,7 +1830,7 @@ const Position = () => {
                       </td>
 
                       {/* Stock Details */}
-                      <td
+                       <td
                         className={`p-4 text-start text-sm font-normal font-sans flex items-center justify-start ${
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
@@ -1846,7 +1846,7 @@ const Position = () => {
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-secheadingGray text-xs mt-1 ">
+                                <span className="text-secheadingGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
                               </span>
@@ -1859,7 +1859,6 @@ const Position = () => {
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-
                                 <span className="text-marketGray text-xs mt-1">
                                   {row.marketType}
                                 </span>
@@ -1872,6 +1871,25 @@ const Position = () => {
                               <span className="flex items-center whitespace-nowrap space-x-1">
                                 <span className="text-headingGray text-sm uppercase">
                                   {row.stockName}
+                                </span>
+                                <span className="text-headingGray text-sm">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
+                              </span>
+                            </>
+                          ) : row.marketType === "EQ" &&
+                            row.position === "OPEN" &&
+                            (row.expiryType === "Monthly" || "Weekly") ? (
+                            <>
+                              <span className="flex items-center whitespace-nowrap space-x-1">
+                                <span className="text-customGray text-sm uppercase">
+                                  {row.stockName}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
                                 </span>
                               </span>
                             </>
@@ -1904,40 +1922,8 @@ const Position = () => {
                                 </span>
                                 <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
                                   {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                          W
-                        </span> */}
-                                  <img
-                                    src={w}
-                                    alt="w"
-                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
-                                  />
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.buyPrice}
-                                </span>
-                                <span className="text-marketGray text-xs mt-1">
-                                  {row.marketType}
-                                </span>
-                              </span>
-                            </>
-                          ) : row.position === "OPEN" &&
-                            row.expiryType === "Weekly" &&
-                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
-                            <>
-                              <span className="flex items-center whitespace-nowrap space-x-1">
-                                <span className="text-customGray text-sm uppercase">
-                                  {row.stockName}
-                                </span>
-                                <span className="text-sm text-customGray">
-                                  {row.date}
-                                  <sup className="text-xms text-customGray">
-                                    {row.thRdNd}
-                                  </sup>
-                                </span>
-                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
-                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
-                          W
-                        </span> */}
+                                    W
+                                  </span> */}
                                   <img
                                     src={w}
                                     alt="w"
@@ -1966,16 +1952,33 @@ const Position = () => {
                                     {row.thRdNd}
                                   </sup>
                                 </span>
+                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                    W
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
+                                </span>
+                                <span className="text-sm text-headingGray">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-secheadingGray text-xs mt-1">
+                                  {row.marketType}
+                                </span>
                               </span>
                             </>
                           ) : row.position === "OPEN" &&
-                            (row.marketType === "NFO" || "MCX" || "BFO") ? (
+                            row.expiryType === "Monthly" &&
+                            (row.marketType === "MCX" || "BFO" || "NFO") ? (
                             <>
                               <span className="flex items-center whitespace-nowrap space-x-1">
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
                                 </span>
-                                <span className="text-sm text-customGray">
+                                <span className="text-customGray text-sm">
                                   {row.buyPrice}
                                 </span>
                                 <span className="text-marketGray text-xs mt-1">
@@ -1988,6 +1991,28 @@ const Position = () => {
                               <span className="flex items-center whitespace-nowrap space-x-1">
                                 <span className="text-customGray text-sm uppercase">
                                   {row.stockName}
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.date}
+                                  <sup className="text-xms text-customGray">
+                                    {row.thRdNd}
+                                  </sup>
+                                </span>
+                                <span className="relative w-2.5 h-2.5 bg-weekBackground rounded-full flex items-center justify-center">
+                                  {/* <span className="text-xxs pt-1 text-weekText leading-none font-normal">
+                                    W
+                                  </span> */}
+                                  <img
+                                    src={w}
+                                    alt="w"
+                                    className="w-1 h-1.6 mx-auto my-auto text-weekText leading-none font-medium"
+                                  />
+                                </span>
+                                <span className="text-sm text-customGray">
+                                  {row.buyPrice}
+                                </span>
+                                <span className="text-marketGray text-xs mt-1">
+                                  {row.marketType}
                                 </span>
                               </span>
                             </>
@@ -2143,21 +2168,34 @@ const Position = () => {
             />
           </div>
           {/* Breakdown with scales */}
-          <div className="block items-center space-x-4 mt-4">
+   
+<div className="block items-center space-x-4 mt-4">
   <span className="font-sans font-normal text-customGray text-lg leading-6 flex items-center border-b mb-8">
     Breakdown
   </span>
 
   {mergedData
-    .sort((a, b) => (a.profit < 0 && b.profit >= 0 ? 1 : -1)) // Sort negative profit items last
+    .sort((a, b) => (Number(a.profit) < 0 && Number(b.profit) >= 0 ? 1 : -1)) // ensure numeric sort
     .map((item, index) => {
-      const effectiveProfit =
-        item.action === "SELL" ? item.profitClose : item.profit;
+      // ✅ Force numeric conversion
+      const effectiveProfit = Number(
+        item.action === "SELL" ? item.profitClose : item.profit
+      );
+  // 🔎 Debug log
+      console.log("Item Debug:", {
+        stockName: item.stockName,
+        rawProfit: item.profit,
+        rawProfitClose: item.profitClose,
+        action: item.action,
+        effectiveProfit,
+        typeOfRawProfit: typeof item.profit,
+        typeOfProfitClose: typeof item.profitClose,
+      });
+      
       const isPositive = effectiveProfit > 0;
       const isNegative = effectiveProfit < 0;
 
-      // 🔹 Label Renderer (all conditions from your <td>)
-      const renderLabel = () => {
+     const renderLabel = () => {
         // EQ + Monthly + CLOSE
         if (
           item.marketType === "EQ" &&
@@ -2324,28 +2362,26 @@ const Position = () => {
           </>
         );
       };
-
       return (
         <div key={index}>
-          {/* Container for each stock's P&L line */}
           <div className="relative flex-grow mt-4">
             {/* Positive P&L Line (Blue) */}
-            {item.profit > 0 && (
+            {effectiveProfit > 0 && (
               <div
                 className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
                 style={{
-                  width: `calc(${calculateLineWidth(item.profit)}% - 8px)`,
+                  width: `calc(${calculateLineWidth(effectiveProfit)}% - 8px)`,
                 }}
               />
             )}
 
             {/* Negative P&L Line (Red) */}
-            {item.profit < 0 && (
+            {effectiveProfit < 0 && (
               <div
                 className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
                 style={{
                   width: `calc(${calculateLineWidth(
-                    Math.abs(item.profit)
+                    Math.abs(effectiveProfit)
                   )}% - 8px)`,
                   transform: "translateX(-100%)",
                 }}
@@ -2368,12 +2404,11 @@ const Position = () => {
             )}
 
             {isNegative && (
-              <div className=" w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
+              <div className="w-40 absolute top-[calc(50%+4px)] transform -translate-y-1/2 left-[calc(50%+2px)]">
                 {renderLabel()}
               </div>
             )}
           </div>
-          {/* <br /> after each line to ensure new line */}
           <br />
         </div>
       );
