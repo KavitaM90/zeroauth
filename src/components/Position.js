@@ -1339,8 +1339,7 @@ const Position = () => {
                           : `${row.action === "SELL" ? "-" : ""}${Math.abs(
                               parseFloat(row.quantity || 0)
                             ).toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
+                              maximumFractionDigits: 0,
                             })}`}
                       </td>
                       {/* Conditional rendering for averagePrice */}
@@ -2036,8 +2035,7 @@ const Position = () => {
                           : `${row.action === "SELL" ? "-" : ""}${Math.abs(
                               parseFloat(row.quantity || 0)
                             ).toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
+                              maximumFractionDigits: 0,
                             })}`}
                       </td>
                       {/* Conditional rendering for averagePrice */}
