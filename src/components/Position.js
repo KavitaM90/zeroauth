@@ -48,12 +48,6 @@ const Position = () => {
     console.log("Data Retrieved from Local Storage:", storedData);
 
     // Append new data
-    // const updatedData = [...storedData, data];
-
-    // // Save updated data to localStorage
-    // localStorage.setItem("marketData", JSON.stringify(updatedData));
-    // console.log("Data Saved in Local Storage:", JSON.parse(localStorage.getItem("marketData")));
-    // Append new data
     const updatedData = [...storedData, data];
 
     // Update state with new data
@@ -67,12 +61,7 @@ const Position = () => {
     setMarketData(data); // Update shared state
     setShowFormm(false); // Close the form modal
   };
-  // useEffect(() => {
-  //   const storedData = JSON.parse(localStorage.getItem("marketData")) || [];
-  //   if (storedData.length > 0) {
-  //     setMarketData(storedData);
-  //   }
-  // }, []);
+
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("marketData")) || [];
     if (storedData.length > 0) {
@@ -99,7 +88,7 @@ const Position = () => {
     if (selectedRowId !== null) {
       console.log("Deleting Row with ID:", selectedRowId);
       const updatedData = submittedData.filter(
-        (row) => row.id !== selectedRowId
+        (row) => row.id !== selectedRowId,
       );
       setSubmittedData(updatedData);
 
@@ -130,7 +119,7 @@ const Position = () => {
     setSelectedRows((prevSelected) =>
       prevSelected.includes(index)
         ? prevSelected.filter((i) => i !== index)
-        : [...prevSelected, index]
+        : [...prevSelected, index],
     );
   };
 
@@ -164,7 +153,7 @@ const Position = () => {
   const totalPages = Math.ceil(stockData.length / rowsPerPage);
   const paginatedData = stockData.slice(
     (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
+    currentPage * rowsPerPage,
   );
 
   const handlePageChange = (page) => {
@@ -251,7 +240,7 @@ const Position = () => {
     let updatedData;
     if (selectedRowId) {
       updatedData = submittedData.map((row) =>
-        row.id === selectedRowId ? newData : row
+        row.id === selectedRowId ? newData : row,
       );
     } else {
       updatedData = [...submittedData, newData];
@@ -1121,10 +1110,10 @@ const Position = () => {
                               row.expiryType === "Monthly")
                               ? "!bg-bgOff !text-disableText"
                               : row.orderType === "MIS"
-                              ? "bg-productBg text-textProduct"
-                              : row.orderType === "NRML"
-                              ? "bg-purple-100 text-purple-800"
-                              : ""
+                                ? "bg-productBg text-textProduct"
+                                : row.orderType === "NRML"
+                                  ? "bg-purple-100 text-purple-800"
+                                  : ""
                           }`}
                         >
                           {row.orderType}
@@ -1328,19 +1317,18 @@ const Position = () => {
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : row.action === "BUY"
-                            ? "text-scaleBlue"
-                            : row.action === "SELL"
-                            ? "text-stockRed"
-                            : "text-stockDefault"
+                              ? "text-scaleBlue"
+                              : row.action === "SELL"
+                                ? "text-stockRed"
+                                : "text-stockDefault"
                         }`}
                       >
                         {row.position === "CLOSE"
                           ? "0"
                           : `${row.action === "SELL" ? "-" : ""}${Math.abs(
-                              parseFloat(row.quantity || 0)
+                              parseFloat(row.quantity || 0),
                             ).toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
+                              maximumFractionDigits: 0,
                             })}`}
                       </td>
                       {/* Conditional rendering for averagePrice */}
@@ -1359,7 +1347,7 @@ const Position = () => {
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )}
                       </td>
                       {/* Conditional rendering for LTP */}
@@ -1381,8 +1369,8 @@ const Position = () => {
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.profit || 0) >= 0
-                            ? "bg-slate-50 text-textGreen"
-                            : "bg-slate-50 text-stockRed"
+                              ? "bg-slate-50 text-textGreen"
+                              : "bg-slate-50 text-stockRed"
                         }`}
                       >
                         {row.position === "CLOSE"
@@ -1390,22 +1378,22 @@ const Position = () => {
                             ? "+"
                             : ""
                           : parseFloat(row.profit || 0) >= 0
-                          ? "+"
-                          : ""}
+                            ? "+"
+                            : ""}
                         {row.position === "CLOSE"
                           ? parseFloat(row.profitClose || 0).toLocaleString(
                               "en-IN",
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )
                           : parseFloat(row.profit || 0).toLocaleString(
                               "en-IN",
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )}
                       </td>
 
@@ -1414,14 +1402,14 @@ const Position = () => {
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.percentageChange || 0) >= 0
-                            ? "text-textGreen"
-                            : "text-stockRed"
+                              ? "text-textGreen"
+                              : "text-stockRed"
                         }`}
                       >
                         {row.position === "CLOSE"
                           ? "0.00%"
                           : `${parseFloat(row.percentageChange || 0).toFixed(
-                              2
+                              2,
                             )}%`}
                       </td>
                       <td className="text-headingGray">
@@ -1819,10 +1807,10 @@ const Position = () => {
                               row.expiryType === "Monthly")
                               ? "!bg-bgOff !text-disableText"
                               : row.orderType === "MIS"
-                              ? "bg-productBg text-textProduct"
-                              : row.orderType === "NRML"
-                              ? "bg-purple-100 text-purple-800"
-                              : ""
+                                ? "bg-productBg text-textProduct"
+                                : row.orderType === "NRML"
+                                  ? "bg-purple-100 text-purple-800"
+                                  : ""
                           }`}
                         >
                           {row.orderType}
@@ -2025,19 +2013,18 @@ const Position = () => {
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : row.action === "BUY"
-                            ? "text-scaleBlue"
-                            : row.action === "SELL"
-                            ? "text-stockRed"
-                            : "text-stockDefault"
+                              ? "text-scaleBlue"
+                              : row.action === "SELL"
+                                ? "text-stockRed"
+                                : "text-stockDefault"
                         }`}
                       >
                         {row.position === "CLOSE"
                           ? "0"
                           : `${row.action === "SELL" ? "-" : ""}${Math.abs(
-                              parseFloat(row.quantity || 0)
+                              parseFloat(row.quantity || 0),
                             ).toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
+                              maximumFractionDigits: 0,
                             })}`}
                       </td>
                       {/* Conditional rendering for averagePrice */}
@@ -2056,7 +2043,7 @@ const Position = () => {
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )}
                       </td>
                       {/* Conditional rendering for LTP */}
@@ -2078,8 +2065,8 @@ const Position = () => {
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.profit || 0) >= 0
-                            ? "bg-slate-50 text-textGreen"
-                            : "bg-slate-50 text-stockRed"
+                              ? "bg-slate-50 text-textGreen"
+                              : "bg-slate-50 text-stockRed"
                         }`}
                       >
                         {row.position === "CLOSE"
@@ -2087,22 +2074,22 @@ const Position = () => {
                             ? "+"
                             : ""
                           : parseFloat(row.profit || 0) >= 0
-                          ? "+"
-                          : ""}
+                            ? "+"
+                            : ""}
                         {row.position === "CLOSE"
                           ? parseFloat(row.profitClose || 0).toLocaleString(
                               "en-IN",
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )
                           : parseFloat(row.profit || 0).toLocaleString(
                               "en-IN",
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )}
                       </td>
 
@@ -2111,14 +2098,14 @@ const Position = () => {
                           row.position === "CLOSE"
                             ? "!bg-rowDisable !text-disableText"
                             : parseFloat(row.percentageChange || 0) >= 0
-                            ? "text-textGreen"
-                            : "text-stockRed"
+                              ? "text-textGreen"
+                              : "text-stockRed"
                         }`}
                       >
                         {row.position === "CLOSE"
                           ? "0.00%"
                           : `${parseFloat(row.percentageChange || 0).toFixed(
-                              2
+                              2,
                             )}%`}
                       </td>
                       <td className="text-headingGray">
@@ -2362,7 +2349,7 @@ const Position = () => {
                           className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left flex items-end h-2 bg-scaleBlue"
                           style={{
                             width: `calc(${calculateLineWidth(
-                              effectiveProfit
+                              effectiveProfit,
                             )}% - 8px)`,
                           }}
                         />
@@ -2374,7 +2361,7 @@ const Position = () => {
                           className="absolute top-1/2 left-1/2 transform -translate-y-1/2 origin-left h-2 bg-stockRed"
                           style={{
                             width: `calc(${calculateLineWidth(
-                              Math.abs(effectiveProfit)
+                              Math.abs(effectiveProfit),
                             )}% - 8px)`,
                             transform: "translateX(-100%)",
                           }}
